@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Metaballs</title>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec4 vColor;
+
+    uniform mat4 modelView;
+    uniform mat4 projection;
+
+    uniform mat4 rotation;
+    uniform mat4 translate;
+    uniform mat4 scale;
+
+    varying vec4 fColor;
+
+    void
+    main()
+    {
+        gl_Position = projection * modelView * translate * rotation * scale *vPosition;
+        fColor = vColor;
+    }
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec4 fColor;
+
+    void
+    main()
+    {
+        gl_FragColor = fColor;
+    }
+</script>
+
+<script type="text/javascript" src="./metaball/webgl-utils.js"></script>
+<script type="text/javascript" src="./metaball/initshaders.js"></script>
+<script type="text/javascript" src="./metaball/mv.js"></script>
+<script type="text/javascript" src="./metaball/smallextlib_mv.js"></script>
+<script type="text/javascript" src="./metaball/models.js"></script>
+<script type="text/javascript" src="./metaball/renderobject.js"></script>
+<script type="text/javascript" src="./metaball/main_metaballs.js"></script>
+</head>   
+
+<body>
+<center>
+
+<canvas id="gl-canvas" width="700" height="500">
+    Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+    
+</center>
+</body></html>
