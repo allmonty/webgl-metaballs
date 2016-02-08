@@ -42,6 +42,9 @@ var metaballShaderRef = {
 
     VERTEX_POSITION: null,
     VERTEX_COLOR: null,
+
+    CAMEYE: null,
+    BALLS: null
 };
 
 //=====Projections=====//
@@ -73,7 +76,7 @@ cube.setScale(vec3(3.0, 3.0, 3.0));
 
 var usePerspective = true;
 var camRotateAround = true;
-var camRotationSpeed = 0.1;
+var camRotationSpeed = 1;
 
 window.onload = function init()
 {
@@ -94,35 +97,38 @@ window.onload = function init()
 
     //=====Get vertex attributes=====//
 
-    simpleShaderRef.VERTEX_POSITION             = gl.getAttribLocation( simpleShaderRef.PROGRAM, "vPosition" );
-    simpleShaderRef.VERTEX_COLOR                = gl.getAttribLocation( simpleShaderRef.PROGRAM, "vColor" );
+    simpleShaderRef.VERTEX_POSITION = gl.getAttribLocation( simpleShaderRef.PROGRAM, "vPosition" );
+    simpleShaderRef.VERTEX_COLOR    = gl.getAttribLocation( simpleShaderRef.PROGRAM, "vColor" );
 
-    simpleShaderRef.SHADER_MODELVIEW_MATRIX     = gl.getUniformLocation( simpleShaderRef.PROGRAM, "modelView" );
-    simpleShaderRef.SHADER_PROJECTION_MATRIX    = gl.getUniformLocation( simpleShaderRef.PROGRAM, "projection" );
+    simpleShaderRef.SHADER_MODELVIEW_MATRIX = gl.getUniformLocation( simpleShaderRef.PROGRAM, "modelView" );
+    simpleShaderRef.SHADER_PROJECTION_MATRIX= gl.getUniformLocation( simpleShaderRef.PROGRAM, "projection" );
 
     simpleShaderRef.SHADER_ROTATION_MATRIX      = gl.getUniformLocation( simpleShaderRef.PROGRAM, "rotation" );
     simpleShaderRef.SHADER_TRANSLATION_MATRIX   = gl.getUniformLocation( simpleShaderRef.PROGRAM, "translate" );
     simpleShaderRef.SHADER_SCALE_MATRIX         = gl.getUniformLocation( simpleShaderRef.PROGRAM, "scale" );
 
-    metaballShaderRef.VERTEX_POSITION             = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vPosition" );
-    metaballShaderRef.VERTEX_COLOR                = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vColor" );
+    metaballShaderRef.VERTEX_POSITION   = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vPosition" );
+    metaballShaderRef.VERTEX_COLOR      = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vColor" );
 
-    metaballShaderRef.SHADER_MODELVIEW_MATRIX     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "modelView" );
-    metaballShaderRef.SHADER_PROJECTION_MATRIX    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "projection" );
+    metaballShaderRef.SHADER_MODELVIEW_MATRIX   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "modelView" );
+    metaballShaderRef.SHADER_PROJECTION_MATRIX  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "projection" );
 
-    metaballShaderRef.SHADER_ROTATION_MATRIX      = gl.getUniformLocation( metaballShaderRef.PROGRAM, "rotation" );
-    metaballShaderRef.SHADER_TRANSLATION_MATRIX   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "translate" );
-    metaballShaderRef.SHADER_SCALE_MATRIX         = gl.getUniformLocation( metaballShaderRef.PROGRAM, "scale" );
+    metaballShaderRef.SHADER_ROTATION_MATRIX    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "rotation" );
+    metaballShaderRef.SHADER_TRANSLATION_MATRIX = gl.getUniformLocation( metaballShaderRef.PROGRAM, "translate" );
+    metaballShaderRef.SHADER_SCALE_MATRIX       = gl.getUniformLocation( metaballShaderRef.PROGRAM, "scale" );
+
+    metaballShaderRef.CAMEYE    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "camEye" );
+    metaballShaderRef.BALLS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "balls" );
 
     //=====Start shader PROGRAM=====//
 
     currentShader = simpleShaderRef;
 
     //=====Load objects=====//
-    
-    // grid.loadBuffers();
 
     cube.loadBuffers();
+
+    cube.translate(vec3(1, 0, 1));
 
     //=====CAMERA=====//
     usePerspective = true;
@@ -169,6 +175,8 @@ function render()
 
     gl.uniformMatrix4fv( currentShader.SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
     gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
+    gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye) );
+    gl.uniform4fv( currentShader.BALLS, vec3To4(cube.position) );
 
     cube.setWebGLToDraw(gl, currentShader);
     cube.drawTriangles(gl);

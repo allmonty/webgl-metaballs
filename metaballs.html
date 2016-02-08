@@ -50,11 +50,13 @@
     uniform mat4 scale;
 
     varying vec4 fColor;
+    varying vec4 fPosition;
 
     void
     main()
     {
-        gl_Position = projection * modelView * translate * rotation * scale *(vPosition+vec4(0.5, 0.5, 0.5, 0.0));
+        fPosition = translate * rotation * scale * vPosition;
+        gl_Position = projection * modelView * fPosition;
         fColor = vColor;
     }
 </script>
@@ -62,12 +64,34 @@
 <script id="metaball-frag-shader" type="x-shader/x-fragment">
     precision mediump float;
 
+    uniform vec4 camEye;
+    uniform vec4 balls;
+
     varying vec4 fColor;
+    varying vec4 fPosition;
 
     void
     main()
     {
+        vec4 auxPos = fPosition;
+        vec4 eyeDir = normalize(fPosition - camEye);
+        int found = 0;
+        for(float i = 0.0; i < 1000.0; i += 1.0)
+        {
+            auxPos += eyeDir*i*0.001;
+            if(abs(distance(auxPos, balls)) <= 1.0)
+            {
+                found = 1;
+                break;
+            }
+        }
+
         gl_FragColor = fColor;
+        
+        if(found == 0)
+        {
+            discard;
+        }
     }
 </script>
 
