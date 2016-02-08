@@ -201,21 +201,21 @@ RenderObject.prototype.drawLineLoops = function(gl)
 	gl.drawElements( gl.LINE_LOOP, this.numElements, gl.UNSIGNED_SHORT, 0 );
 }
 
-RenderObject.prototype.setWebGLToDraw = function(gl)
+RenderObject.prototype.setWebGLToDraw = function(gl, shaderRef)
 {
-	gl.uniformMatrix4fv( SHADER_ROTATION_MATRIX, false, flatten(this.rotationMatrix) );
+	gl.uniformMatrix4fv( shaderRef.SHADER_ROTATION_MATRIX, false, flatten(this.rotationMatrix) );
 
-    gl.uniformMatrix4fv( SHADER_TRANSLATION_MATRIX, false, flatten(this.translationMatrix) );
+    gl.uniformMatrix4fv( shaderRef.SHADER_TRANSLATION_MATRIX, false, flatten(this.translationMatrix) );
     
-    gl.uniformMatrix4fv( SHADER_SCALE_MATRIX, false, flatten(this.scaleMatrix) );
+    gl.uniformMatrix4fv( shaderRef.SHADER_SCALE_MATRIX, false, flatten(this.scaleMatrix) );
 
     gl.bindBuffer( gl.ARRAY_BUFFER, this.posBufferRef );
-    gl.vertexAttribPointer( VERTEX_POSITION, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( VERTEX_POSITION );
+    gl.vertexAttribPointer( shaderRef.VERTEX_POSITION, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( shaderRef.VERTEX_POSITION );
 
     gl.bindBuffer( gl.ARRAY_BUFFER, this.colorBufferRef );
-    gl.vertexAttribPointer( VERTEX_COLOR, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( VERTEX_COLOR);
+    gl.vertexAttribPointer( shaderRef.VERTEX_COLOR, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( shaderRef.VERTEX_COLOR);
 
     gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, this.indexBufferRef );
 }

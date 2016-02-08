@@ -9,20 +9,40 @@ var camUp;
 var camRight;
 var camForward;
 
-//Shader references
-
-var SHADER_MODELVIEW_MATRIX;
 var MVMatrix;
-
-var SHADER_PROJECTION_MATRIX;
 var PMatrix;
 
-var SHADER_ROTATION_MATRIX;
-var SHADER_TRANSLATION_MATRIX;
-var SHADER_SCALE_MATRIX;
+var currentShader;
 
-var VERTEX_POSITION;
-var VERTEX_COLOR;
+//Simple Shader references
+var simpleShaderRef = {
+    PROGRAM: null,
+
+    SHADER_MODELVIEW_MATRIX: null,
+    SHADER_PROJECTION_MATRIX: null,
+
+    SHADER_ROTATION_MATRIX: null,
+    SHADER_TRANSLATION_MATRIX: null,
+    SHADER_SCALE_MATRIX: null,
+
+    VERTEX_POSITION: null,
+    VERTEX_COLOR: null
+};
+
+//Metaball Shader references
+var metaballShaderRef = {
+    PROGRAM: null,
+
+    SHADER_MODELVIEW_MATRIX: null,
+    SHADER_PROJECTION_MATRIX: null,
+
+    SHADER_ROTATION_MATRIX: null,
+    SHADER_TRANSLATION_MATRIX: null,
+    SHADER_SCALE_MATRIX: null,
+
+    VERTEX_POSITION: null,
+    VERTEX_COLOR: null,
+};
 
 //=====Projections=====//
 
@@ -67,22 +87,36 @@ window.onload = function init()
     
     gl.enable(gl.DEPTH_TEST);
 
-    var program = initShaders( gl, "vertex-shader", "fragment-shader" );
-    gl.useProgram( program );
+    simpleShaderRef.PROGRAM     = initShaders( gl, "simple-vert-shader", "simple-frag-shader" );
+    metaballShaderRef.PROGRAM   = initShaders( gl, "metaball-vert-shader", "metaball-frag-shader" );
     
     perspAspect = canvas.width/canvas.height;
 
     //=====Get vertex attributes=====//
 
-    VERTEX_POSITION             = gl.getAttribLocation( program, "vPosition" );
-    VERTEX_COLOR                = gl.getAttribLocation( program, "vColor" );
+    simpleShaderRef.VERTEX_POSITION             = gl.getAttribLocation( simpleShaderRef.PROGRAM, "vPosition" );
+    simpleShaderRef.VERTEX_COLOR                = gl.getAttribLocation( simpleShaderRef.PROGRAM, "vColor" );
 
-    SHADER_MODELVIEW_MATRIX     = gl.getUniformLocation( program, "modelView" );
-    SHADER_PROJECTION_MATRIX    = gl.getUniformLocation( program, "projection" );
+    simpleShaderRef.SHADER_MODELVIEW_MATRIX     = gl.getUniformLocation( simpleShaderRef.PROGRAM, "modelView" );
+    simpleShaderRef.SHADER_PROJECTION_MATRIX    = gl.getUniformLocation( simpleShaderRef.PROGRAM, "projection" );
 
-    SHADER_ROTATION_MATRIX      = gl.getUniformLocation( program, "rotation" );
-    SHADER_TRANSLATION_MATRIX   = gl.getUniformLocation( program, "translate" );
-    SHADER_SCALE_MATRIX         = gl.getUniformLocation( program, "scale" );
+    simpleShaderRef.SHADER_ROTATION_MATRIX      = gl.getUniformLocation( simpleShaderRef.PROGRAM, "rotation" );
+    simpleShaderRef.SHADER_TRANSLATION_MATRIX   = gl.getUniformLocation( simpleShaderRef.PROGRAM, "translate" );
+    simpleShaderRef.SHADER_SCALE_MATRIX         = gl.getUniformLocation( simpleShaderRef.PROGRAM, "scale" );
+
+    metaballShaderRef.VERTEX_POSITION             = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vPosition" );
+    metaballShaderRef.VERTEX_COLOR                = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vColor" );
+
+    metaballShaderRef.SHADER_MODELVIEW_MATRIX     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "modelView" );
+    metaballShaderRef.SHADER_PROJECTION_MATRIX    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "projection" );
+
+    metaballShaderRef.SHADER_ROTATION_MATRIX      = gl.getUniformLocation( metaballShaderRef.PROGRAM, "rotation" );
+    metaballShaderRef.SHADER_TRANSLATION_MATRIX   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "translate" );
+    metaballShaderRef.SHADER_SCALE_MATRIX         = gl.getUniformLocation( metaballShaderRef.PROGRAM, "scale" );
+
+    //=====Start shader PROGRAM=====//
+
+    currentShader = simpleShaderRef;
 
     //=====Load objects=====//
     
@@ -130,13 +164,22 @@ function render()
         PMatrix = ortho( orthoLeft, orthoRight, orthoBottom, orthoTop, orthoNear, orthoFar );
     }
     
-    gl.uniformMatrix4fv( SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
-    gl.uniformMatrix4fv( SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
-    
-    // grid.setWebGLToDraw(gl);
-    // grid.drawLines(gl);
+    currentShader = metaballShaderRef;
+    gl.useProgram( currentShader.PROGRAM );
 
-    cube.setWebGLToDraw(gl);
+    gl.uniformMatrix4fv( currentShader.SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
+    gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
+
+    cube.setWebGLToDraw(gl, currentShader);
+    cube.drawTriangles(gl);
+
+    currentShader = simpleShaderRef;
+    gl.useProgram( currentShader.PROGRAM );
+
+    gl.uniformMatrix4fv( currentShader.SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
+    gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
+
+    cube.setWebGLToDraw(gl, currentShader);
     cube.drawLineLoops(gl);
 
     requestAnimFrame(render);
