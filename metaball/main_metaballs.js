@@ -78,6 +78,24 @@ var usePerspective = true;
 var camRotateAround = true;
 var camRotationSpeed = 1;
 
+//=====FPS=====//
+var FPSDiv;
+var FPS = { 
+            startTime : 0,
+            frameNumber : 0,
+            getFPS : function(){
+                this.frameNumber++;
+                var d = new Date().getTime();
+                var currentTime = ( d - this.startTime ) / 1000;
+                var result = Math.floor( ( this.frameNumber / currentTime ) );
+                if( currentTime > 1 ){
+                    this.startTime = new Date().getTime();
+                    this.frameNumber = 0;
+                }       
+                return result;
+            }
+        };
+
 window.onload = function init()
 {
     canvas = document.getElementById( "gl-canvas" );
@@ -88,7 +106,9 @@ window.onload = function init()
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 0.05, 0.05, 0.1, 1.0 );
     
+    gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LESS);
 
     simpleShaderRef.PROGRAM     = initShaders( gl, "simple-vert-shader", "simple-frag-shader" );
     metaballShaderRef.PROGRAM   = initShaders( gl, "metaball-vert-shader", "metaball-frag-shader" );
@@ -143,6 +163,8 @@ window.onload = function init()
     camForward  = multMat4ToVec3(rotate(45, camUp), camForward);
     camRight    = multMat4ToVec3(rotate(45, camUp), camRight);
 
+    FPSDiv = document.getElementById("fps");
+
     render();
 };
 
@@ -171,12 +193,13 @@ function render()
     }
     
     currentShader = metaballShaderRef;
+    // currentShader = simpleShaderRef;
     gl.useProgram( currentShader.PROGRAM );
 
     gl.uniformMatrix4fv( currentShader.SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
     gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
     gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye) );
-    gl.uniform4fv( currentShader.BALLS, vec3To4(cube.position) );
+    gl.uniform4fv( currentShader.BALLS, vec3To4(cube.position));
 
     cube.setWebGLToDraw(gl, currentShader);
     cube.drawTriangles(gl);
@@ -189,6 +212,8 @@ function render()
 
     cube.setWebGLToDraw(gl, currentShader);
     cube.drawLineLoops(gl);
+
+    FPSDiv.innerHTML = FPS.getFPS();
 
     requestAnimFrame(render);
 }
