@@ -41,7 +41,6 @@ var metaballShaderRef = {
     SHADER_SCALE_MATRIX: null,
 
     VERTEX_POSITION: null,
-    VERTEX_COLOR: null,
 
     CAMEYE: null,
     BALLS: null
@@ -128,7 +127,6 @@ window.onload = function init()
     simpleShaderRef.SHADER_SCALE_MATRIX         = gl.getUniformLocation( simpleShaderRef.PROGRAM, "scale" );
 
     metaballShaderRef.VERTEX_POSITION   = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vPosition" );
-    metaballShaderRef.VERTEX_COLOR      = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vColor" );
 
     metaballShaderRef.SHADER_MODELVIEW_MATRIX   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "modelView" );
     metaballShaderRef.SHADER_PROJECTION_MATRIX  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "projection" );
@@ -168,6 +166,9 @@ window.onload = function init()
     render();
 };
 
+var ballAnimControl = 0.0;
+var ballAnimUp = true;
+
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -200,9 +201,27 @@ function render()
     gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
     gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye) );
 
+    if(ballAnimUp)
+    {
+        ballAnimControl += 0.05;
+        if(ballAnimControl >= 1.0)
+        {
+            ballAnimUp = false;
+        }
+    }
+    else
+    {
+        ballAnimControl -= 0.05;
+        if(ballAnimControl <= -1.0)
+        {
+            ballAnimUp = true;
+        }
+    }
+
     var balls = [];
     balls[0] = vec3To4(cube.position);
-    balls[1] = vec3To4(add(cube.position, vec3(0.5, 0.5, 0)));
+    balls[1] = vec3To4(add(cube.position, vec3(0.5, -ballAnimControl, 0)));
+    balls[2] = vec3To4(add(cube.position, vec3(-0.5, ballAnimControl, 0)));
     gl.uniform4fv( currentShader.BALLS, flatten(balls));
 
     cube.setWebGLToDraw(gl, currentShader);

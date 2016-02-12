@@ -65,46 +65,65 @@
     precision mediump float;
 
     uniform vec4 camEye;
-    uniform vec4 balls[2];
+    uniform vec4 balls[3];
 
-    varying vec4 fColor;
     varying vec4 fPosition;
+
+    vec4 nearestPoint;
+    vec4 farthestPoint;
+
+    int hasHitted = 0;
+
+    void
+    calculatePoints(vec4 startPos, vec4 rayDir, float ballRadius)
+    {
+        vec4 ballDir, ballPosInRay;
+        float ballRayDot;
+        vec4 enterPoint, exitPoint;
+        float A, B, C;
+        for(int i = 0; i < 3; i++)
+        {
+            ballDir         = balls[i] - startPos;
+            ballRayDot      = dot(rayDir, ballDir);
+            ballPosInRay    = ballRayDot * rayDir + startPos;
+
+            if(abs(distance(ballPosInRay, balls[i])) < ballRadius)
+            {
+                A = distance(ballPosInRay, balls[i]);
+                B = ballRadius;
+                C = sqrt(A*A + B*B);
+
+                enterPoint = startPos + rayDir*(ballRayDot - C);
+                exitPoint  = startPos + rayDir*(ballRayDot + C);
+
+                if(distance(enterPoint, startPos) < distance(nearestPoint, startPos) ||
+                    hasHitted == 0)
+                {
+                    nearestPoint = enterPoint;
+                }
+
+                if(distance(exitPoint, startPos) > distance(farthestPoint, startPos)||
+                    hasHitted == 0)
+                {
+                    farthestPoint = exitPoint;
+                }
+
+                hasHitted = 1;
+            }
+        }
+    }
 
     void
     main()
     {
-        vec4 auxPos = fPosition;
-        vec4 rayDir = normalize(fPosition - camEye);
+        vec4 startPos   = fPosition;
+        vec4 rayDir     = normalize(fPosition - camEye);
 
-        vec4 ballDir1 = balls[0] - fPosition;
-        //if dot(rayDir, ballDir1) < 0 the sphere is behind the ray
-        //should not render than
-        vec4 ballPosInRay1 = dot(rayDir, ballDir1) * rayDir + fPosition;
-        
-        vec4 ballDir2 = balls[1] - fPosition;
-        vec4 ballPosInRay2 = dot(rayDir, ballDir2) * rayDir + fPosition;
-        
-        if(abs(distance(ballPosInRay1, balls[0])) <= 0.5 ||
-            abs(distance(ballPosInRay2, balls[1])) <= 0.5 )
+        calculatePoints(startPos, rayDir, 0.5);
+
+        if(hasHitted == 1)
         {
-            int found = 0;
-            for(float i = 0.0; i < 3000.0; i += 1.0)
-            {
-                auxPos += rayDir*0.001;
-                if(abs(distance(auxPos, balls[0])) <= 0.5 ||
-                    abs(distance(auxPos, balls[1])) <= 0.5)
-                {
-                    found = 1;
-                    break;
-                }
-            }
-
-            gl_FragColor = fColor;
-            
-            if(found == 0)
-            {
-                discard;
-            }
+            gl_FragColor = normalize(nearestPoint);
         }
         else
         {

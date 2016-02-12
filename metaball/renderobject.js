@@ -213,10 +213,13 @@ RenderObject.prototype.setWebGLToDraw = function(gl, shaderRef)
     gl.vertexAttribPointer( shaderRef.VERTEX_POSITION, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( shaderRef.VERTEX_POSITION );
 
-    gl.bindBuffer( gl.ARRAY_BUFFER, this.colorBufferRef );
-    gl.vertexAttribPointer( shaderRef.VERTEX_COLOR, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( shaderRef.VERTEX_COLOR);
-
+    if(shaderRef.VERTEX_COLOR != null)
+    {
+    	gl.bindBuffer( gl.ARRAY_BUFFER, this.colorBufferRef );
+    	gl.vertexAttribPointer( shaderRef.VERTEX_COLOR, 4, gl.FLOAT, false, 0, 0 );
+    	gl.enableVertexAttribArray( shaderRef.VERTEX_COLOR);
+	}
+	
     gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, this.indexBufferRef );
 }
 
