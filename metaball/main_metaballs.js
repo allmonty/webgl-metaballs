@@ -199,7 +199,11 @@ function render()
     gl.uniformMatrix4fv( currentShader.SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
     gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
     gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye) );
-    gl.uniform4fv( currentShader.BALLS, vec3To4(cube.position));
+
+    var balls = [];
+    balls[0] = vec3To4(cube.position);
+    balls[1] = vec3To4(add(cube.position, vec3(0.5, 0.5, 0)));
+    gl.uniform4fv( currentShader.BALLS, flatten(balls));
 
     cube.setWebGLToDraw(gl, currentShader);
     cube.drawTriangles(gl);

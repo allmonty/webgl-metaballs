@@ -65,7 +65,7 @@
     precision mediump float;
 
     uniform vec4 camEye;
-    uniform vec4 balls;
+    uniform vec4 balls[2];
 
     varying vec4 fColor;
     varying vec4 fPosition;
@@ -76,15 +76,23 @@
         vec4 auxPos = fPosition;
         vec4 rayDir = normalize(fPosition - camEye);
 
-        vec4 ballDir = balls - fPosition;
-        vec4 ballPosInRay = dot(rayDir, ballDir) * rayDir + fPosition;
-        if(abs(distance(ballPosInRay, balls)) <= 0.5)
+        vec4 ballDir1 = balls[0] - fPosition;
+        //if dot(rayDir, ballDir1) < 0 the sphere is behind the ray
+        //should not render than
+        vec4 ballPosInRay1 = dot(rayDir, ballDir1) * rayDir + fPosition;
+        
+        vec4 ballDir2 = balls[1] - fPosition;
+        vec4 ballPosInRay2 = dot(rayDir, ballDir2) * rayDir + fPosition;
+        
+        if(abs(distance(ballPosInRay1, balls[0])) <= 0.5 ||
+            abs(distance(ballPosInRay2, balls[1])) <= 0.5 )
         {
             int found = 0;
             for(float i = 0.0; i < 3000.0; i += 1.0)
             {
                 auxPos += rayDir*0.001;
-                if(abs(distance(auxPos, balls)) <= 0.5)
+                if(abs(distance(auxPos, balls[0])) <= 0.5 ||
+                    abs(distance(auxPos, balls[1])) <= 0.5)
                 {
                     found = 1;
                     break;
