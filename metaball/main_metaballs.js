@@ -75,7 +75,7 @@ cube.setScale(vec3(3.0, 3.0, 3.0));
 
 var usePerspective = true;
 var camRotateAround = true;
-var camRotationSpeed = 1;
+var camRotationSpeed = 0.1;
 
 //=====FPS=====//
 var FPSDiv;
@@ -203,7 +203,7 @@ function render()
 
     if(ballAnimUp)
     {
-        ballAnimControl += 0.05;
+        ballAnimControl += 0.01;
         if(ballAnimControl >= 1.0)
         {
             ballAnimUp = false;
@@ -211,7 +211,7 @@ function render()
     }
     else
     {
-        ballAnimControl -= 0.05;
+        ballAnimControl -= 0.01;
         if(ballAnimControl <= -1.0)
         {
             ballAnimUp = true;

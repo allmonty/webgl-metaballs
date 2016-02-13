@@ -64,14 +64,17 @@
 <script id="metaball-frag-shader" type="x-shader/x-fragment">
     precision mediump float;
 
+    const int numOfBalls = 3;
+
     uniform vec4 camEye;
-    uniform vec4 balls[3];
+    uniform vec4 balls[numOfBalls];
 
     varying vec4 fPosition;
 
     vec4 nearestPoint;
     vec4 farthestPoint;
 
+    int hittedBalls[numOfBalls];
     int hasHitted = 0;
 
     void
@@ -81,7 +84,7 @@
         float ballRayDot;
         vec4 enterPoint, exitPoint;
         float A, B, C;
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < numOfBalls; i++)
         {
             ballDir         = balls[i] - startPos;
             ballRayDot      = dot(rayDir, ballDir);
@@ -108,10 +111,42 @@
                     farthestPoint = exitPoint;
                 }
 
+                hittedBalls[i] = 1;
                 hasHitted = 1;
+            }
+            else if(abs(distance(ballPosInRay, balls[i])) == ballRadius)
+            {
+                if(distance(ballPosInRay, startPos) < distance(nearestPoint, startPos) ||
+                    hasHitted == 0)
+                {
+                    nearestPoint = enterPoint;
+                }
+
+                if(distance(ballPosInRay, startPos) > distance(farthestPoint, startPos)||
+                    hasHitted == 0)
+                {
+                    farthestPoint = exitPoint;
+                }
+
+                hittedBalls[i] = 1;
+                hasHitted = 1;
+            }
+            else
+            {
+                hittedBalls[i] = 0;
             }
         }
     }
+
+    float
+    g(float r)
+    {
+        return r * r * r * (r * (r * 6.0 - 15.0) + 10.0);
+    }
+
+    const float numOfSteps = 100.0;
+
+    float threshold = 0.12;
 
     void
     main()
@@ -119,11 +154,53 @@
         vec4 startPos   = fPosition;
         vec4 rayDir     = normalize(fPosition - camEye);
 
-        calculatePoints(startPos, rayDir, 0.5);
+        float ballsRadius = 1.0;
+        calculatePoints(startPos, rayDir, ballsRadius);
 
         if(hasHitted == 1)
         {
-            gl_FragColor = normalize(nearestPoint);
+            float rayLength = distance(nearestPoint, farthestPoint);
+            float rayStep = rayLength/numOfSteps;
+
+            vec4 actualPoint = nearestPoint;
+            float chargeSum = 0.0;
+
+            int shouldRender = 0;
+
+            for(float i = 0.0; i <= numOfSteps; i += 1.0)
+            {
+                actualPoint = actualPoint + rayDir*rayStep;
+                for(int j = 0; j < numOfBalls; j += 1)
+                {
+                    if(hittedBalls[j] == 1)
+                    {
+                        float dist = distance(actualPoint, balls[j])/ballsRadius;
+                        if(dist <= 1.0)
+                        {
+                            chargeSum += g(1.0 - dist);
+                        }
+                    }
+                }
+
+                if(chargeSum >= threshold)
+                {
+                    shouldRender = 1;
+                    break;
+                }
+                else
+                {
+                    chargeSum = 0.0;
+                }
+            }
+
+            if(shouldRender == 1)
+            {
+                gl_FragColor = normalize(actualPoint);
+            }
+            else
+            {
+                discard;
+            }
         }
         else
         {
