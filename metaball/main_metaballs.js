@@ -43,6 +43,7 @@ var metaballShaderRef = {
     VERTEX_POSITION: null,
 
     CAMEYE: null,
+    LIGHT_POS: null,
     BALLS_POS: null,
     BALLS_COLORS: null
 };
@@ -71,6 +72,10 @@ var cube = new RenderObject();
 cube.instanceName = "Cube";
 cube.init(36, CubeVertices, CubeColors, CubeIndices);
 cube.setScale(vec3(3.0, 3.0, 3.0));
+
+var light = new RenderObject();
+light.instanceName = "light";
+light.position = vec3(3.0, 3.0, -3.0);
 
 //=====Control Variables=====//
 
@@ -137,6 +142,7 @@ window.onload = function init()
     metaballShaderRef.SHADER_SCALE_MATRIX       = gl.getUniformLocation( metaballShaderRef.PROGRAM, "scale" );
 
     metaballShaderRef.CAMEYE        = gl.getUniformLocation( metaballShaderRef.PROGRAM, "camEye" );
+    metaballShaderRef.LIGHT_POS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "lightPosition" );
     metaballShaderRef.BALLS_POS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsPos" );
     metaballShaderRef.BALLS_COLORS  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsColors" );
 
@@ -168,7 +174,7 @@ window.onload = function init()
     render();
 };
 
-var ballAnimControl = 0.0;
+var ballAnimControl = 2.0;
 var ballAnimUp = true;
 
 function render()
@@ -195,6 +201,8 @@ function render()
         PMatrix = ortho( orthoLeft, orthoRight, orthoBottom, orthoTop, orthoNear, orthoFar );
     }
     
+    light.rotateInPivot(1.0, vec3(0,1,0), vec3(0,0,0));
+
     currentShader = metaballShaderRef;
     // currentShader = simpleShaderRef;
     gl.useProgram( currentShader.PROGRAM );
@@ -202,8 +210,9 @@ function render()
     gl.uniformMatrix4fv( currentShader.SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
     gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
     gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye) );
+    gl.uniform4fv( currentShader.LIGHT_POS, vec3To4(light.position) );    
 
-    if(ballAnimUp)
+    /*if(ballAnimUp)
     {
         ballAnimControl += 0.02;
         if(ballAnimControl >= 3.0)
@@ -218,7 +227,7 @@ function render()
         {
             ballAnimUp = true;
         }
-    }
+    }*/
 
     var balls = [];
     balls[0] = vec3To4(cube.position);
