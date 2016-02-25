@@ -162,10 +162,10 @@
         vec4 startPos   = fPosition;
         vec4 rayDir     = normalize(fPosition - camEye);
 
-        vec4 normal           = vec4(0.0, 0.0, 0.0, 1.0);
-        vec4 normalsTotal     = vec4(0.0, 0.0, 0.0, 1.0);
-        vec4 weightedNormal   = vec4(0.0, 0.0, 0.0, 1.0);
-        vec4 blendedNormal    = vec4(0.0, 0.0, 0.0, 1.0);
+        vec3 normal           = vec3(0.0, 0.0, 0.0);
+        vec3 normalsTotal     = vec3(0.0, 0.0, 0.0);
+        vec3 weightedNormal   = vec3(0.0, 0.0, 0.0);
+        vec3 blendedNormal    = vec3(0.0, 0.0, 0.0);
 
         float ballsRadius = 1.0;
         calculatePoints(startPos, rayDir, ballsRadius);
@@ -183,13 +183,14 @@
             for(float i = 0.0; i <= numOfRaySteps; i += 1.0)
             {
                 actualPoint = actualPoint + rayDir*rayStep;
+
                 for(int j = 0; j < numOfBalls; j += 1)
                 {
                     if(hittedBalls[j] == 1)
                     {
                         float dist = distance(actualPoint, ballsPos[j])/ballsRadius;
 
-                        normal = normalize(actualPoint - ballsPos[j]);
+                        normal = normalize(actualPoint.xyz - ballsPos[j].xyz);
 
                         // Check if the current point is inside the ball
                         if(dist <= 1.0)
@@ -210,13 +211,14 @@
                 if(chargeSum >= threshold)
                 {
                     shouldRender = 1;
-                    blendedNormal = normalize( normalsTotal / chargeSum );
+                    blendedNormal = normalsTotal / chargeSum;
+                    blendedNormal = normalize(blendedNormal);
                     break;
                 }
                 else
                 {
                     chargeSum = 0.0;                    
-                    normalsTotal = vec4(0.0, 0.0, 0.0, 1.0);
+                    normalsTotal = vec3(0.0, 0.0, 0.0);
 
                     drawColor = vec4(0.0, 0.0, 0.0, 0.0);
                 }
@@ -224,52 +226,65 @@
 
             if(shouldRender == 1)
             {
-                // Applying Phong
-                vec4 dirToLightNorm = normalize(lightPosition - actualPoint);
-                vec4 dirToLight     = lightPosition - actualPoint;
-                vec4 dirToCamera    = normalize(camEye - actualPoint);
-                
-                // vec4 reflected   = reflect(blendedNormal, -dirToLight);
-                // vec4 reflected = 2.0 * dot(blendedNormal, dirToLight) * blendedNormal - dirToLight;
-                vec4 blinnSpec = (dirToLight + dirToCamera) / 2.0;
+                vec3 dirToLight         = vec3(0.0, 0.0, 0.0);
+                vec3 dirToCamera        = vec3(0.0, 0.0, 0.0);
+                vec3 dirToLightNorm     = vec3(0.0, 0.0, 0.0);
+                vec3 dirToCameraNorm    = vec3(0.0, 0.0, 0.0);
+
+                dirToLight      = lightPosition.xyz - actualPoint.xyz;
+                dirToCamera     = camEye.xyz - actualPoint.xyz;
+                dirToLightNorm  = normalize(dirToLight);
+                dirToCameraNorm = normalize(dirToCamera);
 
                 // Last component is the intensity of the color
-                vec4 ambientLightColor  = vec4(0.7, 0.2, 0.6, 0.0); 
-                vec4 diffuseLightColor  = vec4(0.7, 0.2, 0.6, 3.0); 
-                vec4 specularLightColor = vec4(0.7, 0.2, 0.6, 1.0);
+                vec3 ambientLightColor  = vec3(1.0, 1.0, 0.8);
+                float ambientIntensity  = 0.15;
+                
+                vec3 diffuseLightColor  = vec3(1.0, 1.0, 0.8);
+                float diffuseIntensity  = 1.5;
+
+                vec3 specularLightColor = vec3(1.0, 1.0, 0.8);
+                float specularIntensity = 1.0;
+
                 float shine = 5.0;
                 
-                vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0);
-                ambient.r = ambientLightColor.r * drawColor.r * ambientLightColor.w;
-                ambient.g = ambientLightColor.g * drawColor.g * ambientLightColor.w;
-                ambient.b = ambientLightColor.b * drawColor.b * ambientLightColor.w;
+                vec3 ambient    = vec3(0.0, 0.0, 0.0);
+                vec3 diffuse    = vec3(0.0, 0.0, 0.0);
+                vec3 specular   = vec3(0.0, 0.0, 0.0);
 
-                vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
-                diffuse.r = diffuseLightColor.r * drawColor.r * max( dot(dirToLightNorm, blendedNormal), 0.0 ) * diffuseLightColor.w;
-                diffuse.g = diffuseLightColor.g * drawColor.g * max( dot(dirToLightNorm, blendedNormal), 0.0 ) * diffuseLightColor.w;
-                diffuse.b = diffuseLightColor.b * drawColor.b * max( dot(dirToLightNorm, blendedNormal), 0.0 ) * diffuseLightColor.w;
+                ambient.r   = ambientLightColor.r * drawColor.r * ambientIntensity;
+                ambient.g   = ambientLightColor.g * drawColor.g * ambientIntensity;
+                ambient.b   = ambientLightColor.b * drawColor.b * ambientIntensity;
 
-                vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
-                /*specular.r = specularLightColor.r * drawColor.r * pow( max( dot(reflected, dirToCamera), 0.0 ), shine ) * specularLightColor.w;
-                specular.g = specularLightColor.g * drawColor.g * pow( max( dot(reflected, dirToCamera), 0.0 ), shine ) * specularLightColor.w;
-                specular.b = specularLightColor.b * drawColor.b * pow( max( dot(reflected, dirToCamera), 0.0 ), shine ) * specularLightColor.w;*/
+                float lambertian = max( dot( dirToLightNorm, blendedNormal ), 0.0 );
+                if(lambertian >= 0.0)
+                {
+                    diffuse.r = diffuseLightColor.r * drawColor.r * lambertian * diffuseIntensity;
+                    diffuse.g = diffuseLightColor.g * drawColor.g * lambertian * diffuseIntensity;
+                    diffuse.b = diffuseLightColor.b * drawColor.b * lambertian * diffuseIntensity;
+
+                //-----BLINN-----//
+                    // vec3 blinnHalfway   = vec3(0.0, 0.0, 0.0);
+                    // blinnHalfway        = normalize(dirToLight + dirToCamera);
+
+                    // float blinn = pow( max( dot(blendedNormal, blinnHalfway), 0.0 ), shine );
+                    // specular.r = specularLightColor.r * blinn * specularIntensity;
+                    // specular.g = specularLightColor.g * blinn * specularIntensity;
+                    // specular.b = specularLightColor.b * blinn * specularIntensity;
+
                 
-                // Blinn
-                specular.r = specularLightColor.r * drawColor.r * pow( max( dot(blendedNormal, blinnSpec), 0.0 ), shine ) * specularLightColor.w;
-                specular.g = specularLightColor.g * drawColor.g * pow( max( dot(blendedNormal, blinnSpec), 0.0 ), shine ) * specularLightColor.w;
-                specular.b = specularLightColor.b * drawColor.b * pow( max( dot(blendedNormal, blinnSpec), 0.0 ), shine ) * specularLightColor.w;
+                //-----PHONG-----//
+                    vec3 phongReflected     = vec3(0.0, 0.0, 0.0);
+                    phongReflected          = -reflect(dirToLightNorm, blendedNormal);
 
-/*
-                L - 2.0 * dot(N, L) * N
-                2 * dot(N,L)N - L
-*/
+                    float phong = pow( max( dot(phongReflected, dirToCameraNorm), 0.0 ), shine );
+                    specular.r = specularLightColor.r * phong * specularIntensity;
+                    specular.g = specularLightColor.g * phong * specularIntensity;
+                    specular.b = specularLightColor.b * phong * specularIntensity;
+                }
 
-
-                // float phongIntensity = max(0, dot(dirToLight, blendedNormal)) + dot(reflected, dirToCamera);
-
-                // gl_FragColor = normalize(drawColor) * phongIntensity;
-                drawColor.a  = 1.0;
-                gl_FragColor = ambient + diffuse + specular;
+                vec3 color =  ambient + diffuse + specular;
+                gl_FragColor = vec4(color, 1.0);
             }
             else
             {

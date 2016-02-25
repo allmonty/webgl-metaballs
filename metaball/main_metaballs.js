@@ -75,7 +75,7 @@ cube.setScale(vec3(3.0, 3.0, 3.0));
 
 var light = new RenderObject();
 light.instanceName = "light";
-light.position = vec3(3.0, 3.0, -3.0);
+light.position = vec3(10.0, 0.0, 10.0);
 
 //=====Control Variables=====//
 
@@ -233,7 +233,7 @@ function render()
     balls[0] = vec3To4(cube.position);
     balls[1] = vec3To4(add(cube.position, vec3(0.0, -ballAnimControl, 0)));
     balls[2] = vec3To4(add(cube.position, vec3(-0.0, ballAnimControl, 0)));
-    balls[3] = vec3To4(add(cube.position, vec3(ballAnimControl, ballAnimControl, 0)));
+    balls[3] = vec3To4(add(cube.position, vec3(ballAnimControl, ballAnimControl, ballAnimControl)));
     gl.uniform4fv( currentShader.BALLS_POS, flatten(balls));
     var ballsColors = [];
     ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
