@@ -43,7 +43,8 @@ var metaballShaderRef = {
     VERTEX_POSITION: null,
 
     CAMEYE: null,
-    BALLS: null
+    BALLS_POS: null,
+    BALLS_COLORS: null
 };
 
 //=====Projections=====//
@@ -74,7 +75,7 @@ cube.setScale(vec3(3.0, 3.0, 3.0));
 //=====Control Variables=====//
 
 var usePerspective = true;
-var camRotateAround = true;
+var camRotateAround = false;
 var camRotationSpeed = 0.1;
 
 //=====FPS=====//
@@ -135,8 +136,9 @@ window.onload = function init()
     metaballShaderRef.SHADER_TRANSLATION_MATRIX = gl.getUniformLocation( metaballShaderRef.PROGRAM, "translate" );
     metaballShaderRef.SHADER_SCALE_MATRIX       = gl.getUniformLocation( metaballShaderRef.PROGRAM, "scale" );
 
-    metaballShaderRef.CAMEYE    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "camEye" );
-    metaballShaderRef.BALLS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "balls" );
+    metaballShaderRef.CAMEYE        = gl.getUniformLocation( metaballShaderRef.PROGRAM, "camEye" );
+    metaballShaderRef.BALLS_POS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsPos" );
+    metaballShaderRef.BALLS_COLORS  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsColors" );
 
     //=====Start shader PROGRAM=====//
 
@@ -146,20 +148,20 @@ window.onload = function init()
 
     cube.loadBuffers();
 
-    cube.translate(vec3(1, 0, 1));
+    //cube.translate(vec3(1, 0, 1));
 
     //=====CAMERA=====//
     usePerspective = true;
 
-    camEye      = vec3(-5, 2, -5);
+    camEye      = vec3(0, 2, -5);
     camUp       = vec3(0, 1, 0);
     camForward  = vec3(0, 0, 1);
     camRight    = cross( camForward, camUp);
 
     camForward  = multMat4ToVec3(rotate(-15, camRight), camForward);
 
-    camForward  = multMat4ToVec3(rotate(45, camUp), camForward);
-    camRight    = multMat4ToVec3(rotate(45, camUp), camRight);
+    //camForward  = multMat4ToVec3(rotate(45, camUp), camForward);
+    //camRight    = multMat4ToVec3(rotate(45, camUp), camRight);
 
     FPSDiv = document.getElementById("fps");
 
@@ -203,16 +205,16 @@ function render()
 
     if(ballAnimUp)
     {
-        ballAnimControl += 0.01;
-        if(ballAnimControl >= 1.0)
+        ballAnimControl += 0.02;
+        if(ballAnimControl >= 3.0)
         {
             ballAnimUp = false;
         }
     }
     else
     {
-        ballAnimControl -= 0.01;
-        if(ballAnimControl <= -1.0)
+        ballAnimControl -= 0.02;
+        if(ballAnimControl <= -3.0)
         {
             ballAnimUp = true;
         }
@@ -220,9 +222,16 @@ function render()
 
     var balls = [];
     balls[0] = vec3To4(cube.position);
-    balls[1] = vec3To4(add(cube.position, vec3(0.5, -ballAnimControl, 0)));
-    balls[2] = vec3To4(add(cube.position, vec3(-0.5, ballAnimControl, 0)));
-    gl.uniform4fv( currentShader.BALLS, flatten(balls));
+    balls[1] = vec3To4(add(cube.position, vec3(0.0, -ballAnimControl, 0)));
+    balls[2] = vec3To4(add(cube.position, vec3(-0.0, ballAnimControl, 0)));
+    balls[3] = vec3To4(add(cube.position, vec3(ballAnimControl, ballAnimControl, 0)));
+    gl.uniform4fv( currentShader.BALLS_POS, flatten(balls));
+    var ballsColors = [];
+    ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
+    ballsColors[1] = vec4(0.0, 1.0, 0.0, 1.0);
+    ballsColors[2] = vec4(0.0, 0.0, 1.0, 1.0);
+    ballsColors[3] = vec4(1.0, 1.0, 0.0, 1.0);
+    gl.uniform4fv( currentShader.BALLS_COLORS, flatten(ballsColors));
 
     cube.setWebGLToDraw(gl, currentShader);
     cube.drawTriangles(gl);

@@ -64,35 +64,38 @@
 <script id="metaball-frag-shader" type="x-shader/x-fragment">
     precision mediump float;
 
-    const int numOfBalls = 3;
+    const int numOfBalls        = 4;
+    const float numOfRaySteps   = 100.0;
 
     uniform vec4 camEye;
-    uniform vec4 balls[numOfBalls];
+    uniform vec4 ballsPos[numOfBalls];
+    uniform vec4 ballsColors[numOfBalls];
 
     varying vec4 fPosition;
 
-    vec4 nearestPoint;
-    vec4 farthestPoint;
+    vec4 nearestPoint   = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 farthestPoint  = vec4(0.0, 0.0, 0.0, 1.0);
+
+    vec4 drawColor  = vec4(0.0, 0.0, 0.0, 0.0);
 
     int hittedBalls[numOfBalls];
-    int hasHitted = 0;
+    int hasHitted   = 0;
 
-    void
-    calculatePoints(vec4 startPos, vec4 rayDir, float ballRadius)
+    void calculatePoints(vec4 startPos, vec4 rayDir, float ballRadius)
     {
         vec4 ballDir, ballPosInRay;
         float ballRayDot;
         vec4 enterPoint, exitPoint;
-        float A, B, C;
+        float A, B, C; //Sides in the pythagoras theorem
         for(int i = 0; i < numOfBalls; i++)
         {
-            ballDir         = balls[i] - startPos;
+            ballDir         = ballsPos[i] - startPos;
             ballRayDot      = dot(rayDir, ballDir);
             ballPosInRay    = ballRayDot * rayDir + startPos;
 
-            if(abs(distance(ballPosInRay, balls[i])) < ballRadius)
+            if(abs(distance(ballPosInRay, ballsPos[i])) < ballRadius)
             {
-                A = distance(ballPosInRay, balls[i]);
+                A = distance(ballPosInRay, ballsPos[i]);
                 B = ballRadius;
                 C = sqrt(A*A + B*B);
 
@@ -114,7 +117,7 @@
                 hittedBalls[i] = 1;
                 hasHitted = 1;
             }
-            else if(abs(distance(ballPosInRay, balls[i])) == ballRadius)
+            else if(abs(distance(ballPosInRay, ballsPos[i])) == ballRadius)
             {
                 if(distance(ballPosInRay, startPos) < distance(nearestPoint, startPos) ||
                     hasHitted == 0)
@@ -138,15 +141,17 @@
         }
     }
 
-    float
-    g(float r)
+    // #define M_PI 3.1415926535897932384626433832795;
+    float metaballFormula(float d)
     {
-        return r * r * r * (r * (r * 6.0 - 15.0) + 10.0);
+        // return d * d * d * (d * (d * 6.0 - 15.0) + 10.0);
+        // return d*d*d*d - d*d + 0.25;
+        // return (cos(d*3.1416*4.0 + 3.1416) + 1.0)/2.0;
+        return (1.0 - d*d)*(1.0 - d*d);
     }
 
-    const float numOfSteps = 100.0;
-
-    float threshold = 0.12;
+    // float threshold = 0.12;
+    float threshold = 0.5;
 
     void
     main()
@@ -160,24 +165,27 @@
         if(hasHitted == 1)
         {
             float rayLength = distance(nearestPoint, farthestPoint);
-            float rayStep = rayLength/numOfSteps;
+            float rayStep = rayLength/numOfRaySteps;
 
             vec4 actualPoint = nearestPoint;
             float chargeSum = 0.0;
 
             int shouldRender = 0;
 
-            for(float i = 0.0; i <= numOfSteps; i += 1.0)
+            for(float i = 0.0; i <= numOfRaySteps; i += 1.0)
             {
                 actualPoint = actualPoint + rayDir*rayStep;
                 for(int j = 0; j < numOfBalls; j += 1)
                 {
                     if(hittedBalls[j] == 1)
                     {
-                        float dist = distance(actualPoint, balls[j])/ballsRadius;
+                        float dist = distance(actualPoint, ballsPos[j])/ballsRadius;
                         if(dist <= 1.0)
                         {
-                            chargeSum += g(1.0 - dist);
+                            // chargeSum += metaballFormula(1.0 - dist);
+                            float charge = metaballFormula(dist);
+                            chargeSum += charge;
+                            drawColor += charge*ballsColors[j];
                         }
                     }
                 }
@@ -190,12 +198,13 @@
                 else
                 {
                     chargeSum = 0.0;
+                    drawColor = vec4(0.0, 0.0, 0.0, 0.0);
                 }
             }
 
             if(shouldRender == 1)
             {
-                gl_FragColor = normalize(actualPoint);
+                gl_FragColor = normalize(drawColor);
             }
             else
             {
