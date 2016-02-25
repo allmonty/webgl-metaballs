@@ -225,18 +225,19 @@
             if(shouldRender == 1)
             {
                 // Applying Phong
-                vec4 dirToLight  = normalize(lightPosition - actualPoint);
-                vec4 dirToCamera = normalize(camEye - actualPoint);
+                vec4 dirToLightNorm = normalize(lightPosition - actualPoint);
+                vec4 dirToLight     = lightPosition - actualPoint;
+                vec4 dirToCamera    = normalize(camEye - actualPoint);
                 
-                vec4 reflected   = reflect(blendedNormal, dirToLight);
+                // vec4 reflected   = reflect(blendedNormal, -dirToLight);
                 // vec4 reflected = 2.0 * dot(blendedNormal, dirToLight) * blendedNormal - dirToLight;
-                // vec4 blinnSpec = (dirToLight + dirToCamera) / 2.0;
+                vec4 blinnSpec = (dirToLight + dirToCamera) / 2.0;
 
                 // Last component is the intensity of the color
                 vec4 ambientLightColor  = vec4(0.7, 0.2, 0.6, 0.0); 
                 vec4 diffuseLightColor  = vec4(0.7, 0.2, 0.6, 3.0); 
-                // vec4 specularLightColor = vec4(0.7, 0.2, 0.6, 10.0);
-                // float shine = 100.0;
+                vec4 specularLightColor = vec4(0.7, 0.2, 0.6, 1.0);
+                float shine = 5.0;
                 
                 vec4 ambient = vec4(0.0, 0.0, 0.0, 1.0);
                 ambient.r = ambientLightColor.r * drawColor.r * ambientLightColor.w;
@@ -244,19 +245,19 @@
                 ambient.b = ambientLightColor.b * drawColor.b * ambientLightColor.w;
 
                 vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
-                diffuse.r = diffuseLightColor.r * drawColor.r * max( dot(dirToLight, blendedNormal), 0.0 ) * diffuseLightColor.w;
-                diffuse.g = diffuseLightColor.g * drawColor.g * max( dot(dirToLight, blendedNormal), 0.0 ) * diffuseLightColor.w;
-                diffuse.b = diffuseLightColor.b * drawColor.b * max( dot(dirToLight, blendedNormal), 0.0 ) * diffuseLightColor.w;
+                diffuse.r = diffuseLightColor.r * drawColor.r * max( dot(dirToLightNorm, blendedNormal), 0.0 ) * diffuseLightColor.w;
+                diffuse.g = diffuseLightColor.g * drawColor.g * max( dot(dirToLightNorm, blendedNormal), 0.0 ) * diffuseLightColor.w;
+                diffuse.b = diffuseLightColor.b * drawColor.b * max( dot(dirToLightNorm, blendedNormal), 0.0 ) * diffuseLightColor.w;
 
-                /*vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
-                specular.r = specularLightColor.r * drawColor.r * pow( dot(reflected, dirToCamera), shine ) * specularLightColor.w;
-                specular.g = specularLightColor.g * drawColor.g * pow( dot(reflected, dirToCamera), shine ) * specularLightColor.w;
-                specular.b = specularLightColor.b * drawColor.b * pow( dot(reflected, dirToCamera), shine ) * specularLightColor.w;*/
+                vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+                /*specular.r = specularLightColor.r * drawColor.r * pow( max( dot(reflected, dirToCamera), 0.0 ), shine ) * specularLightColor.w;
+                specular.g = specularLightColor.g * drawColor.g * pow( max( dot(reflected, dirToCamera), 0.0 ), shine ) * specularLightColor.w;
+                specular.b = specularLightColor.b * drawColor.b * pow( max( dot(reflected, dirToCamera), 0.0 ), shine ) * specularLightColor.w;*/
                 
-                /* Blinn
+                // Blinn
                 specular.r = specularLightColor.r * drawColor.r * pow( max( dot(blendedNormal, blinnSpec), 0.0 ), shine ) * specularLightColor.w;
                 specular.g = specularLightColor.g * drawColor.g * pow( max( dot(blendedNormal, blinnSpec), 0.0 ), shine ) * specularLightColor.w;
-                specular.b = specularLightColor.b * drawColor.b * pow( max( dot(blendedNormal, blinnSpec), 0.0 ), shine ) * specularLightColor.w;*/
+                specular.b = specularLightColor.b * drawColor.b * pow( max( dot(blendedNormal, blinnSpec), 0.0 ), shine ) * specularLightColor.w;
 
 /*
                 L - 2.0 * dot(N, L) * N
@@ -268,7 +269,7 @@
 
                 // gl_FragColor = normalize(drawColor) * phongIntensity;
                 drawColor.a  = 1.0;
-                gl_FragColor = ambient + diffuse /*+ specular*/;
+                gl_FragColor = ambient + diffuse + specular;
             }
             else
             {

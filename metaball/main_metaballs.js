@@ -174,7 +174,7 @@ window.onload = function init()
     render();
 };
 
-var ballAnimControl = 2.0;
+var ballAnimControl = 0.0;
 var ballAnimUp = true;
 
 function render()
@@ -201,7 +201,7 @@ function render()
         PMatrix = ortho( orthoLeft, orthoRight, orthoBottom, orthoTop, orthoNear, orthoFar );
     }
     
-    light.rotateInPivot(1.0, vec3(0,1,0), vec3(0,0,0));
+    light.rotateInPivot(3.0, vec3(0,1,0), vec3(0,0,0));
 
     currentShader = metaballShaderRef;
     // currentShader = simpleShaderRef;
@@ -212,7 +212,7 @@ function render()
     gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye) );
     gl.uniform4fv( currentShader.LIGHT_POS, vec3To4(light.position) );    
 
-    /*if(ballAnimUp)
+    if(ballAnimUp)
     {
         ballAnimControl += 0.02;
         if(ballAnimControl >= 3.0)
@@ -227,7 +227,7 @@ function render()
         {
             ballAnimUp = true;
         }
-    }*/
+    }
 
     var balls = [];
     balls[0] = vec3To4(cube.position);
