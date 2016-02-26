@@ -1,0 +1,27 @@
+{
+  "name": "metaballs-webgl",
+  "version": "1.0.0",
+  "description": "Metaballs (blob) implementation using WebGL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allmonty/WebGLMetaballs.git"
+  },
+  "keywords": [
+    "webgl",
+    "metalball",
+    "blob"
+  ],
+  "author": "Allan Monteiro David, Miguel Péres de Castro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allmonty/WebGLMetaballs/issues"
+  },
+  "homepage": "https://github.com/allmonty/WebGLMetaballs#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}
