@@ -177,8 +177,6 @@ function render()
     if(camRotateAround)
     {
         camEye.rotateInPivotWithChildren(3.0, vec3(0, 1, 0), vec3(0, 0, 0));
-        console.log(Math.acos(dot(camEye.transformForward, normalize(subtract(vec3(0,0,0),camEye.position)))));
-        //camEye.rotateInPivotWithChildren(Math.acos(dot(camEye.transformForward, normalize(subtract(vec3(0,0,0),camEye.position)))), vec3(0, 1, 0) , camEye.position);
     }
 
     camAt = add(camEye.position, camEye.transformForward);
@@ -224,14 +222,13 @@ function render()
     var balls = [];
     balls[0] = vec3To4(vec3(0,0,0));
     balls[1] = vec3To4(add(vec3(0,0,0), vec3(0.0, -ballAnimControl, 0)));
-    balls[2] = vec3To4(add(vec3(0,0,0), vec3(-0.0, ballAnimControl, 0)));
-    balls[3] = vec3To4(add(vec3(0,0,0), vec3(ballAnimControl, ballAnimControl, ballAnimControl)));
-    balls[4] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, ballAnimControl, ballAnimControl)));
-    balls[5] = vec3To4(add(vec3(0,0,0), vec3(ballAnimControl, -ballAnimControl, ballAnimControl)));
-    balls[6] = vec3To4(add(vec3(0,0,0), vec3(ballAnimControl, ballAnimControl, -ballAnimControl)));
-    balls[7] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, ballAnimControl, -ballAnimControl)));
-    balls[8] = vec3To4(add(vec3(0,0,0), vec3(ballAnimControl, -ballAnimControl, -ballAnimControl)));
-    balls[9] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, -ballAnimControl, ballAnimControl)));
+    balls[2] = vec3To4(add(vec3(0,0,0), vec3(0.0,  ballAnimControl, 0)));
+    balls[3] = vec3To4(add(vec3(0,0,0), vec3( ballAnimControl, 0.0, 0.0)));
+    balls[4] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, 0.0, 0.0)));
+    balls[5] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, ballAnimControl, 0.0)));
+    balls[6] = vec3To4(add(vec3(0,0,0), vec3( ballAnimControl, ballAnimControl, 0.0)));
+    balls[7] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, -ballAnimControl, 0.0)));
+    balls[8] = vec3To4(add(vec3(0,0,0), vec3( ballAnimControl, -ballAnimControl, 0.0)));
     gl.uniform4fv( currentShader.BALLS_POS, flatten(balls));
 
     var ballsColors = [];
@@ -244,7 +241,6 @@ function render()
     ballsColors[6] = vec4(1.0, 0.5, 0.5, 1.0);
     ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
     ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
-    ballsColors[9] = vec4(0.5, 0.5, 0.5, 1.0);
     gl.uniform4fv( currentShader.BALLS_COLORS, flatten(ballsColors));
 
     plane.setWebGLToDraw(gl, currentShader);

@@ -65,8 +65,8 @@
 <script id="metaball-frag-shader" type="x-shader/x-fragment">
     precision mediump float;
 
-    const int numOfBalls        = 10;
-    const float numOfRaySteps   = 100.0;
+    const int numOfBalls        = 9;
+    const float numOfRaySteps   = 1000.0;
 
     uniform vec4 camEye;
     uniform vec4 lightPosition;
@@ -238,15 +238,15 @@
 
                 // Last component is the intensity of the color
                 vec3 ambientLightColor  = vec3(1.0, 1.0, 0.8);
-                float ambientIntensity  = 0.15;
+                float ambientIntensity  = 0.2;
                 
                 vec3 diffuseLightColor  = vec3(1.0, 1.0, 0.8);
-                float diffuseIntensity  = 1.5;
+                float diffuseIntensity  = 1.0;
 
                 vec3 specularLightColor = vec3(1.0, 1.0, 0.8);
-                float specularIntensity = 1.0;
+                float specularIntensity = 1.5;
 
-                float shine = 5.0;
+                float shine = 20.0;
                 
                 vec3 ambient    = vec3(0.0, 0.0, 0.0);
                 vec3 diffuse    = vec3(0.0, 0.0, 0.0);
