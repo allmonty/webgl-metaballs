@@ -208,22 +208,22 @@ function render()
     gl.uniform4fv( currentShader.LIGHT_POS, vec3To4(light.position) );    
     gl.uniform1i( currentShader.BLINN_SPEC, useBlinn );    
 
-    // if(ballAnimUp)
-    // {
-    //     ballAnimControl += 0.02;
-    //     if(ballAnimControl >= 1.5)
-    //     {
-    //         ballAnimUp = false;
-    //     }
-    // }
-    // else
-    // {
-    //     ballAnimControl -= 0.02;
-    //     if(ballAnimControl <= -1.5)
-    //     {
-    //         ballAnimUp = true;
-    //     }
-    // }
+    if(ballAnimUp)
+    {
+        ballAnimControl += 0.02;
+        if(ballAnimControl >= 1.5)
+        {
+            ballAnimUp = false;
+        }
+    }
+    else
+    {
+        ballAnimControl -= 0.02;
+        if(ballAnimControl <= -1.5)
+        {
+            ballAnimUp = true;
+        }
+    }
 
     var balls = [];
     balls[0] = vec3To4(vec3(0,0,0));
