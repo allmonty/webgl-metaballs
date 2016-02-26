@@ -1,14 +1,6 @@
 var canvas;
 var gl;
 
-//Camera variables
-
-var camEye;
-var camAt;
-var camUp;
-var camRight;
-var camForward;
-
 var MVMatrix;
 var PMatrix;
 
@@ -51,7 +43,7 @@ var metaballShaderRef = {
 //=====Projections=====//
 
 var perspFOVY = 45.0;
-var perspNear = 0.3;
+var perspNear = 0.2;
 var perspFar = 100.0;
 var perspAspect; //calculated based on canvas height and width
 
@@ -68,19 +60,29 @@ var orthoTop    =  10.0;
 // grid.instanceName = "Grid";
 // grid.init(40, GridVertices, GridColors, GridIndices);
 
-var cube = new RenderObject();
-cube.instanceName = "Cube";
-cube.init(36, CubeVertices, CubeColors, CubeIndices);
-cube.setScale(vec3(3.0, 3.0, 3.0));
+var plane = new RenderObject();
+plane.instanceName = "renderPlane";
+// plane.init(36, CubeVertices, CubeColors, CubeIndices);
+plane.init(6, PlaneVertices, PlaneColors, PlaneIndices);
+plane.setScale(vec3(0.345, 0.246, 1.0));
+plane.setPosition(vec3(0.0, 0.0, 0.3));
 
 var light = new RenderObject();
 light.instanceName = "light";
 light.position = vec3(10.0, 0.0, 10.0);
 
+var camEye = new RenderObject();
+camEye.instanceName = "camEye";
+camEye.position = vec3(0.0, 0.0, 0.0);
+camEye.children.push(plane);
+
+camEye.translateWithChildren(vec3(0.0, 0.0, -10.0));
+// camEye.setPositionWithChildren(vec3(-10, 0.0, -10.0));
+
 //=====Control Variables=====//
 
 var usePerspective = true;
-var camRotateAround = false;
+var camRotateAround = true;
 var camRotationSpeed = 0.1;
 
 //=====FPS=====//
@@ -125,14 +127,14 @@ window.onload = function init()
     simpleShaderRef.VERTEX_POSITION = gl.getAttribLocation( simpleShaderRef.PROGRAM, "vPosition" );
     simpleShaderRef.VERTEX_COLOR    = gl.getAttribLocation( simpleShaderRef.PROGRAM, "vColor" );
 
-    simpleShaderRef.SHADER_MODELVIEW_MATRIX = gl.getUniformLocation( simpleShaderRef.PROGRAM, "modelView" );
-    simpleShaderRef.SHADER_PROJECTION_MATRIX= gl.getUniformLocation( simpleShaderRef.PROGRAM, "projection" );
+    simpleShaderRef.SHADER_MODELVIEW_MATRIX     = gl.getUniformLocation( simpleShaderRef.PROGRAM, "modelView" );
+    simpleShaderRef.SHADER_PROJECTION_MATRIX    = gl.getUniformLocation( simpleShaderRef.PROGRAM, "projection" );
 
     simpleShaderRef.SHADER_ROTATION_MATRIX      = gl.getUniformLocation( simpleShaderRef.PROGRAM, "rotation" );
     simpleShaderRef.SHADER_TRANSLATION_MATRIX   = gl.getUniformLocation( simpleShaderRef.PROGRAM, "translate" );
     simpleShaderRef.SHADER_SCALE_MATRIX         = gl.getUniformLocation( simpleShaderRef.PROGRAM, "scale" );
 
-    metaballShaderRef.VERTEX_POSITION   = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vPosition" );
+    metaballShaderRef.VERTEX_POSITION           = gl.getAttribLocation( metaballShaderRef.PROGRAM, "vPosition" );
 
     metaballShaderRef.SHADER_MODELVIEW_MATRIX   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "modelView" );
     metaballShaderRef.SHADER_PROJECTION_MATRIX  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "projection" );
@@ -152,22 +154,10 @@ window.onload = function init()
 
     //=====Load objects=====//
 
-    cube.loadBuffers();
-
-    //cube.translate(vec3(1, 0, 1));
+    plane.loadBuffers();
 
     //=====CAMERA=====//
     usePerspective = true;
-
-    camEye      = vec3(0, 2, -5);
-    camUp       = vec3(0, 1, 0);
-    camForward  = vec3(0, 0, 1);
-    camRight    = cross( camForward, camUp);
-
-    camForward  = multMat4ToVec3(rotate(-15, camRight), camForward);
-
-    //camForward  = multMat4ToVec3(rotate(45, camUp), camForward);
-    //camRight    = multMat4ToVec3(rotate(45, camUp), camRight);
 
     FPSDiv = document.getElementById("fps");
 
@@ -176,6 +166,7 @@ window.onload = function init()
 
 var ballAnimControl = 0.0;
 var ballAnimUp = true;
+var camAt;
 
 function render()
 {
@@ -185,12 +176,13 @@ function render()
     
     if(camRotateAround)
     {
-        camEye = multMat4ToVec3(rotate(camRotationSpeed, vec3(0, 1, 0)), camEye);
-        camForward = multMat4ToVec3(rotate(camRotationSpeed, vec3(0, 1, 0)), camForward);
+        camEye.rotateInPivotWithChildren(3.0, vec3(0, 1, 0), vec3(0, 0, 0));
+        console.log(Math.acos(dot(camEye.transformForward, normalize(subtract(vec3(0,0,0),camEye.position)))));
+        //camEye.rotateInPivotWithChildren(Math.acos(dot(camEye.transformForward, normalize(subtract(vec3(0,0,0),camEye.position)))), vec3(0, 1, 0) , camEye.position);
     }
 
-    camAt = add(camEye, camForward);
-    MVMatrix = lookAt(camEye, camAt, camUp);
+    camAt = add(camEye.position, camEye.transformForward);
+    MVMatrix = lookAt(camEye.position, camAt, camEye.transformUp);
     
     if(usePerspective)
     {
@@ -201,7 +193,7 @@ function render()
         PMatrix = ortho( orthoLeft, orthoRight, orthoBottom, orthoTop, orthoNear, orthoFar );
     }
     
-    light.rotateInPivot(3.0, vec3(0,1,0), vec3(0,0,0));
+    // light.rotateInPivot(3.0, vec3(0,1,0), vec3(0,0,0));
 
     currentShader = metaballShaderRef;
     // currentShader = simpleShaderRef;
@@ -209,13 +201,13 @@ function render()
 
     gl.uniformMatrix4fv( currentShader.SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
     gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
-    gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye) );
+    gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye.position) );
     gl.uniform4fv( currentShader.LIGHT_POS, vec3To4(light.position) );    
 
     if(ballAnimUp)
     {
         ballAnimControl += 0.02;
-        if(ballAnimControl >= 3.0)
+        if(ballAnimControl >= 1.5)
         {
             ballAnimUp = false;
         }
@@ -223,27 +215,40 @@ function render()
     else
     {
         ballAnimControl -= 0.02;
-        if(ballAnimControl <= -3.0)
+        if(ballAnimControl <= -1.5)
         {
             ballAnimUp = true;
         }
     }
 
     var balls = [];
-    balls[0] = vec3To4(cube.position);
-    balls[1] = vec3To4(add(cube.position, vec3(0.0, -ballAnimControl, 0)));
-    balls[2] = vec3To4(add(cube.position, vec3(-0.0, ballAnimControl, 0)));
-    balls[3] = vec3To4(add(cube.position, vec3(ballAnimControl, ballAnimControl, ballAnimControl)));
+    balls[0] = vec3To4(vec3(0,0,0));
+    balls[1] = vec3To4(add(vec3(0,0,0), vec3(0.0, -ballAnimControl, 0)));
+    balls[2] = vec3To4(add(vec3(0,0,0), vec3(-0.0, ballAnimControl, 0)));
+    balls[3] = vec3To4(add(vec3(0,0,0), vec3(ballAnimControl, ballAnimControl, ballAnimControl)));
+    balls[4] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, ballAnimControl, ballAnimControl)));
+    balls[5] = vec3To4(add(vec3(0,0,0), vec3(ballAnimControl, -ballAnimControl, ballAnimControl)));
+    balls[6] = vec3To4(add(vec3(0,0,0), vec3(ballAnimControl, ballAnimControl, -ballAnimControl)));
+    balls[7] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, ballAnimControl, -ballAnimControl)));
+    balls[8] = vec3To4(add(vec3(0,0,0), vec3(ballAnimControl, -ballAnimControl, -ballAnimControl)));
+    balls[9] = vec3To4(add(vec3(0,0,0), vec3(-ballAnimControl, -ballAnimControl, ballAnimControl)));
     gl.uniform4fv( currentShader.BALLS_POS, flatten(balls));
+
     var ballsColors = [];
     ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
     ballsColors[1] = vec4(0.0, 1.0, 0.0, 1.0);
     ballsColors[2] = vec4(0.0, 0.0, 1.0, 1.0);
     ballsColors[3] = vec4(1.0, 1.0, 0.0, 1.0);
+    ballsColors[4] = vec4(0.0, 1.0, 1.0, 1.0);
+    ballsColors[5] = vec4(1.0, 0.0, 1.0, 1.0);
+    ballsColors[6] = vec4(1.0, 0.5, 0.5, 1.0);
+    ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
+    ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
+    ballsColors[9] = vec4(0.5, 0.5, 0.5, 1.0);
     gl.uniform4fv( currentShader.BALLS_COLORS, flatten(ballsColors));
 
-    cube.setWebGLToDraw(gl, currentShader);
-    cube.drawTriangles(gl);
+    plane.setWebGLToDraw(gl, currentShader);
+    plane.drawTriangles(gl);
 
     currentShader = simpleShaderRef;
     gl.useProgram( currentShader.PROGRAM );
@@ -251,8 +256,9 @@ function render()
     gl.uniformMatrix4fv( currentShader.SHADER_MODELVIEW_MATRIX, false, flatten(MVMatrix) );
     gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
 
-    cube.setWebGLToDraw(gl, currentShader);
-    cube.drawLineLoops(gl);
+    plane.setWebGLToDraw(gl, currentShader);
+    plane.drawLineLoops(gl);
+    // plane.drawTriangles(gl);
 
     FPSDiv.innerHTML = FPS.getFPS();
 

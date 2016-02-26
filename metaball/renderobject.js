@@ -46,6 +46,25 @@ RenderObject.prototype.setLocalPivot = function(v)
 	this.localPivot = add(v, this.position);
 }
 
+RenderObject.prototype.setPosition = function(v)
+{
+	this.position = v;
+	this.updateTranslationMatrix();
+}
+
+RenderObject.prototype.setPositionWithChildren = function(v)
+{
+	var dir = subtract(v, this.position);
+
+	var iterator = 0;
+	for(iterator = 0; iterator < this.children.length; iterator++)
+	{
+		this.children[iterator].translateWithChildren(dir);
+	}
+
+	this.setPosition(v);
+}
+
 RenderObject.prototype.updateTranslationMatrix = function()
 {
 	this.translationMatrix = translate(this.position);
