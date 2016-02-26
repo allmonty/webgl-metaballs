@@ -71,6 +71,7 @@
 
     uniform vec4 camEye;
     uniform vec4 lightPosition;
+    uniform bool blinnSpecular;
 
     uniform vec4 ballsPos[numOfBalls];
     uniform vec4 ballsColors[numOfBalls];
@@ -227,6 +228,7 @@
 
             if(shouldRender == 1)
             {
+                vec3 color = vec3(0.0,0.0,0.0);
                 vec3 dirToLight         = vec3(0.0, 0.0, 0.0);
                 vec3 dirToCamera        = vec3(0.0, 0.0, 0.0);
                 vec3 dirToLightNorm     = vec3(0.0, 0.0, 0.0);
@@ -265,16 +267,19 @@
                     diffuse.b = diffuseLightColor.b * drawColor.b * lambertian * diffuseIntensity;
 
                 //-----BLINN-----//
-                    // vec3 blinnHalfway   = vec3(0.0, 0.0, 0.0);
-                    // blinnHalfway        = normalize(dirToLight + dirToCamera);
+                if(blinnSpecular)
+                {
+                    vec3 blinnHalfway   = vec3(0.0, 0.0, 0.0);
+                    blinnHalfway        = normalize(dirToLight + dirToCamera);
 
-                    // float blinn = pow( max( dot(blendedNormal, blinnHalfway), 0.0 ), shine );
-                    // specular.r = specularLightColor.r * blinn * specularIntensity;
-                    // specular.g = specularLightColor.g * blinn * specularIntensity;
-                    // specular.b = specularLightColor.b * blinn * specularIntensity;
+                    float blinn = pow( max( dot(blendedNormal, blinnHalfway), 0.0 ), shine );
+                    specular.r = specularLightColor.r * blinn * specularIntensity;
+                    specular.g = specularLightColor.g * blinn * specularIntensity;
+                    specular.b = specularLightColor.b * blinn * specularIntensity;
 
-                
-                //-----PHONG-----//
+                }
+                else
+                {
                     vec3 phongReflected     = vec3(0.0, 0.0, 0.0);
                     phongReflected          = -reflect(dirToLightNorm, blendedNormal);
 
@@ -283,8 +288,20 @@
                     specular.g = specularLightColor.g * phong * specularIntensity;
                     specular.b = specularLightColor.b * phong * specularIntensity;
                 }
+                    
 
-                vec3 color =  ambient + diffuse + specular;
+                
+                //-----PHONG-----//
+                    // vec3 phongReflected     = vec3(0.0, 0.0, 0.0);
+                    // phongReflected          = -reflect(dirToLightNorm, blendedNormal);
+
+                    // float phong = pow( max( dot(phongReflected, dirToCameraNorm), 0.0 ), shine );
+                    // specular.r = specularLightColor.r * phong * specularIntensity;
+                    // specular.g = specularLightColor.g * phong * specularIntensity;
+                    // specular.b = specularLightColor.b * phong * specularIntensity;
+                }
+
+                color =  ambient + diffuse + specular;
                 gl_FragColor = vec4(color, 1.0);
             }
             else

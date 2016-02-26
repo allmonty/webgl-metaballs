@@ -37,7 +37,9 @@ var metaballShaderRef = {
     CAMEYE: null,
     LIGHT_POS: null,
     BALLS_POS: null,
-    BALLS_COLORS: null
+    BALLS_COLORS: null,
+
+    BLINN_SPEC: null
 };
 
 //=====Projections=====//
@@ -84,6 +86,8 @@ camEye.translateWithChildren(vec3(0.0, 0.0, -10.0));
 var usePerspective = true;
 var camRotateAround = true;
 var camRotationSpeed = 0.1;
+
+var useBlinn = true;
 
 //=====FPS=====//
 var FPSDiv;
@@ -147,6 +151,7 @@ window.onload = function init()
     metaballShaderRef.LIGHT_POS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "lightPosition" );
     metaballShaderRef.BALLS_POS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsPos" );
     metaballShaderRef.BALLS_COLORS  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsColors" );
+    metaballShaderRef.BLINN_SPEC    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "blinnSpecular" );
 
     //=====Start shader PROGRAM=====//
 
@@ -201,23 +206,24 @@ function render()
     gl.uniformMatrix4fv( currentShader.SHADER_PROJECTION_MATRIX, false, flatten(PMatrix) );
     gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye.position) );
     gl.uniform4fv( currentShader.LIGHT_POS, vec3To4(light.position) );    
+    gl.uniform1i( currentShader.BLINN_SPEC, useBlinn );    
 
-    if(ballAnimUp)
-    {
-        ballAnimControl += 0.02;
-        if(ballAnimControl >= 1.5)
-        {
-            ballAnimUp = false;
-        }
-    }
-    else
-    {
-        ballAnimControl -= 0.02;
-        if(ballAnimControl <= -1.5)
-        {
-            ballAnimUp = true;
-        }
-    }
+    // if(ballAnimUp)
+    // {
+    //     ballAnimControl += 0.02;
+    //     if(ballAnimControl >= 1.5)
+    //     {
+    //         ballAnimUp = false;
+    //     }
+    // }
+    // else
+    // {
+    //     ballAnimControl -= 0.02;
+    //     if(ballAnimControl <= -1.5)
+    //     {
+    //         ballAnimUp = true;
+    //     }
+    // }
 
     var balls = [];
     balls[0] = vec3To4(vec3(0,0,0));
