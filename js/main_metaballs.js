@@ -115,10 +115,11 @@ window.onload = function init()
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
-    gl.clearColor( 0.05, 0.05, 0.1, 1.0 );
+    gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
     
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
+    //gl.enable(gl.BLEND);
     gl.depthFunc(gl.LESS);
 
     simpleShaderRef.PROGRAM     = initShaders( gl, "simple-vert-shader", "simple-frag-shader" );
@@ -178,7 +179,7 @@ function render()
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     gl.clearColor( 0.05, 0.05, 0.1, 1.0 );
-    
+
     if(camRotateAround)
     {
         camEye.rotateInPivotWithChildren(3.0, vec3(0, 1, 0), vec3(0, 0, 0));
