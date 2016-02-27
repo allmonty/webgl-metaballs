@@ -1,15 +1,30 @@
 @mixin stroke($color){
-  text-shadow:
-   -1px -1px 0 $color,  
-    1px -1px 0 $color,
-    -1px 1px 0 $color,
-     1px 1px 0 $color;
+  	text-shadow:
+	-1px -1px 0 $color,  
+     1px -1px 0 $color,
+    -1px  1px 0 $color,
+     1px  1px 0 $color;
+}
+
+@mixin boxed-shadow($offX, $offY, $blur, $spread, $color){
+  	-webkit-box-shadow: $offX $offY $blur $spread $color;
+  	-moz-box-shadow: 	$offX $offY $blur $spread $color;
+  	box-shadow: 		$offX $offY $blur $spread $color;
+}
+
+@font-face {
+  font-family: 'Yaahowu';
+  src: url('../fonts/Yaahowu.ttf');
+}
+@font-face {
+  font-family: 'Adequate';
+  src: url('../fonts/Adequate-ExtraLight.ttf');
 }
 
 body{
 	background-color: #000;
-	font-family: monospace;
 	margin: 0px 0px 0px 0px;
+	font-family: 'Adequate';
 
 	background-image: url("../images/footer_lodyas.png");
 }
@@ -17,12 +32,14 @@ body{
 #centerStripe
 {
 	position:fixed;
-	background-color: #fff;
-	opacity: 0.1;
+	background-color: #aaa;
+	opacity: 0.2;
 
 	left: 25%;
 	width: 50%;
 	height: 100%;
+
+	@include boxed-shadow(10px, 14px, 18px, 1px, rgba(0,0,0,1.0));
 }
 
 h1{
