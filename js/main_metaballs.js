@@ -66,7 +66,7 @@ var plane = new RenderObject();
 plane.instanceName = "renderPlane";
 // plane.init(36, CubeVertices, CubeColors, CubeIndices);
 plane.init(6, PlaneVertices, PlaneColors, PlaneIndices);
-plane.setScale(vec3(0.345, 0.246, 1.0));
+plane.setScale(vec3(0.395, 0.245, 1.0));
 plane.setPosition(vec3(0.0, 0.0, 0.3));
 
 var light = new RenderObject();
@@ -109,8 +109,8 @@ var FPS = {
 
 window.onload = function init()
 {
-    canvas = document.getElementById( "gl-canvas" );
-    
+    canvas = document.getElementById( "glcanvas" );
+
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
@@ -124,6 +124,7 @@ window.onload = function init()
 
     simpleShaderRef.PROGRAM     = initShaders( gl, "simple-vert-shader", "simple-frag-shader" );
     metaballShaderRef.PROGRAM   = initShaders( gl, "metaball-vert-shader", "metaball-frag-shader" );
+    
     
     perspAspect = canvas.width/canvas.height;
 
@@ -263,7 +264,7 @@ function render()
     plane.drawLineLoops(gl);
     // plane.drawTriangles(gl);
 
-    FPSDiv.innerHTML = FPS.getFPS();
+    FPSDiv.innerHTML = "FPS: " + FPS.getFPS();
 
     requestAnimFrame(render);
 }

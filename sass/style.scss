@@ -1,3 +1,59 @@
-p {
-	color: blue;
+@mixin stroke($color){
+  text-shadow:
+   -1px -1px 0 $color,  
+    1px -1px 0 $color,
+    -1px 1px 0 $color,
+     1px 1px 0 $color;
+}
+
+body{
+	background-color: #000;
+	font-family: monospace;
+	margin: 0px 0px 0px 0px;
+
+	background-image: url("../images/footer_lodyas.png");
+}
+
+#centerStripe
+{
+	position:fixed;
+	background-color: #fff;
+	opacity: 0.1;
+
+	left: 25%;
+	width: 50%;
+	height: 100%;
+}
+
+h1{
+	@include stroke(#fff);
+	color: #000;
+	font-size: 3em;
+}
+
+#title{
+	text-align: center;
+}
+
+#fps{
+	color: #fff;
+	text-align: center;
+}
+
+#page{
+	position:absolute;
+
+	left: 25%;
+	width: 50%;
+
+	> h1 {
+		opacity: initial;
+	}
+}
+
+#glcanvas{
+	margin-left: 5%;
+	width: 90%;
+	padding-bottom: 1.6;
+	float: middle;
 }
