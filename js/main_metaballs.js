@@ -38,8 +38,10 @@ var metaballShaderRef = {
     LIGHT_POS: null,
     BALLS_POS: null,
     BALLS_COLORS: null,
+    BALLS_RADIUS: null,
 
-    BLINN_SPEC: null
+    BLINN_SPEC: null,
+    SPECULAR_ON: null
 };
 
 //=====Projections=====//
@@ -71,7 +73,7 @@ plane.setPosition(vec3(0.0, 0.0, 0.3));
 
 var light = new RenderObject();
 light.instanceName = "light";
-light.position = vec3(10.0, 0.0, 10.0);
+light.position = vec3(-10.0, 0.0, -10.0);
 
 var camEye = new RenderObject();
 camEye.instanceName = "camEye";
@@ -155,6 +157,7 @@ window.onload = function init()
     metaballShaderRef.LIGHT_POS    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "lightPosition" );
     metaballShaderRef.BALLS_POS    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsPos" );
     metaballShaderRef.BALLS_COLORS = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsColors" );
+    metaballShaderRef.BALLS_RADIUS = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsRadius" );
     metaballShaderRef.BLINN_SPEC   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "blinnSpecular" );
     metaballShaderRef.SPECULAR_ON  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "specularOn" );
 
@@ -260,6 +263,21 @@ function render()
     ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
     ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
     gl.uniform4fv( currentShader.BALLS_COLORS, flatten(ballsColors));
+
+    // RADIUS
+    var ballsRadius = [];
+    ballsRadius[0] = 0.5;
+    ballsRadius[1] = 0.75;
+    ballsRadius[2] = 0.65;
+    ballsRadius[3] = 0.4;
+    ballsRadius[4] = 0.2;
+    ballsRadius[5] = 0.36;
+    ballsRadius[6] = 0.9;
+    ballsRadius[7] = 0.1;
+    ballsRadius[8] = 0.25;
+    gl.uniform1fv( currentShader.BALLS_RADIUS, flatten(ballsRadius));
+
+
 
     plane.setWebGLToDraw(gl, currentShader);
     plane.drawTriangles(gl);
