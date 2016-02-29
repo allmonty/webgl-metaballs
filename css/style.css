@@ -23,6 +23,13 @@ body {
   -moz-box-shadow: 10px 14px 18px 1px black;
   box-shadow: 10px 14px 18px 1px black; }
 
+.controls-opt {
+  margin-bottom: 1.5em; }
+
+.opt-title {
+  font-weight: bold;
+  font-size: 1.2em; }
+
 h1 {
   text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
   color: #000;

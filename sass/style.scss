@@ -42,6 +42,15 @@ body{
 	@include boxed-shadow(10px, 14px, 18px, 1px, rgba(0,0,0,1.0));
 }
 
+.controls-opt {
+	margin-bottom: 1.5em;
+}
+
+.opt-title {
+	font-weight: bold;
+	font-size: 1.2em;
+}
+
 h1{
 	@include stroke(#fff);
 	color: #000;

@@ -87,11 +87,14 @@ camEye.translateWithChildren(vec3(0.0, 0.0, -10.0));
 
 var usePerspective = true;
 var camRotateAround = false;
-var camRotationSpeed = 0.1;
+var camRotationSpeed = 1.0;
 var lightRotation = false;
+var numOfBalls = 9;
 
 var useBlinn = false;
 var useSpecular = true;
+
+var ballsRadius = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
 
 //=====FPS=====//
 var FPSDiv;
@@ -192,7 +195,7 @@ function render()
 
     if(camRotateAround)
     {
-        camEye.rotateInPivotWithChildren(3.0, vec3(0, 1, 0), vec3(0, 0, 0));
+        camEye.rotateInPivotWithChildren(camRotationSpeed, vec3(0, 1, 0), vec3(0, 0, 0));
     }
 
     camAt = add(camEye.position, camEye.transformForward);
@@ -240,6 +243,7 @@ function render()
         }
     }
 
+    // POSITION
     var balls = [];
     balls[0] = vec3To4(vec3(0,0,0));
     balls[1] = vec3To4(add(vec3(0,0,0), vec3(0.0, -ballAnimControl, 0)));
@@ -252,6 +256,7 @@ function render()
     balls[8] = vec3To4(add(vec3(0,0,0), vec3( ballAnimControl, -ballAnimControl, 0.0)));
     gl.uniform4fv( currentShader.BALLS_POS, flatten(balls));
 
+    // COLOR
     var ballsColors = [];
     ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
     ballsColors[1] = vec4(0.0, 1.0, 0.0, 1.0);
@@ -263,18 +268,9 @@ function render()
     ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
     ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
     gl.uniform4fv( currentShader.BALLS_COLORS, flatten(ballsColors));
-
+    
     // RADIUS
-    var ballsRadius = [];
-    ballsRadius[0] = 0.5;
-    ballsRadius[1] = 0.75;
-    ballsRadius[2] = 0.65;
-    ballsRadius[3] = 0.4;
-    ballsRadius[4] = 0.2;
-    ballsRadius[5] = 0.36;
-    ballsRadius[6] = 0.9;
-    ballsRadius[7] = 0.1;
-    ballsRadius[8] = 0.25;
+    // console.log(ballsRadius);
     gl.uniform1fv( currentShader.BALLS_RADIUS, flatten(ballsRadius));
 
 
