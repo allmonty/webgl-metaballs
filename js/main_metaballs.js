@@ -84,8 +84,9 @@ camEye.translateWithChildren(vec3(0.0, 0.0, -10.0));
 //=====Control Variables=====//
 
 var usePerspective = true;
-var camRotateAround = true;
+var camRotateAround = false;
 var camRotationSpeed = 0.1;
+var lightRotation = false;
 
 var useBlinn = false;
 var useSpecular = true;
@@ -203,7 +204,10 @@ function render()
         PMatrix = ortho( orthoLeft, orthoRight, orthoBottom, orthoTop, orthoNear, orthoFar );
     }
     
-    // light.rotateInPivot(3.0, vec3(0,1,0), vec3(0,0,0));
+    if(lightRotation)
+    {
+        light.rotateInPivot(3.0, vec3(0,1,0), vec3(0,0,0));        
+    }
 
     currentShader = metaballShaderRef;
     // currentShader = simpleShaderRef;
@@ -216,22 +220,22 @@ function render()
     gl.uniform1i( currentShader.BLINN_SPEC, useBlinn );    
     gl.uniform1i( currentShader.SPECULAR_ON, useSpecular );    
 
-    // if(ballAnimUp)
-    // {
-    //     ballAnimControl += 0.02;
-    //     if(ballAnimControl >= 1.5)
-    //     {
-    //         ballAnimUp = false;
-    //     }
-    // }
-    // else
-    // {
-    //     ballAnimControl -= 0.02;
-    //     if(ballAnimControl <= -1.5)
-    //     {
-    //         ballAnimUp = true;
-    //     }
-    // }
+    if(ballAnimUp)
+    {
+        ballAnimControl += 0.02;
+        if(ballAnimControl >= 1.5)
+        {
+            ballAnimUp = false;
+        }
+    }
+    else
+    {
+        ballAnimControl -= 0.02;
+        if(ballAnimControl <= -1.5)
+        {
+            ballAnimUp = true;
+        }
+    }
 
     var balls = [];
     balls[0] = vec3To4(vec3(0,0,0));

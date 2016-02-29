@@ -1,13 +1,8 @@
-// var radios = document.forms["formA"].elements["myradio"];
-// for(var i = 0, max = radios.length; i < max; i++) {
-//     radios[i].onclick = function() {
-//         alert(this.value);
-//     }
-// }
-
 function initControls()
 {
 	specularControls();
+	cameraControls();
+	lightControls();
 }
 
 function specularControls()
@@ -33,4 +28,21 @@ function specularControls()
 			}
 		});
 	}	
+}
+
+function cameraControls()
+{
+	var cameraRotation = document.getElementById('cam-rotation');
+	cameraRotation.addEventListener('click', function(){
+		camRotateAround = this.checked;
+	});
+}
+
+function lightControls()
+{
+	var cameraRotation = document.getElementById('light-rotation');
+	cameraRotation.addEventListener('click', function(){
+		lightRotation = this.checked;
+	});
+
 }

@@ -321,11 +321,22 @@
     <div id="fps"></div>
 
     <div id="controls">
+        <!-- Specular Controls -->
         <div id="specular-controls" class="controls-opt">
-            <label><b>Specular:</b></label><br><br>
+            <span>Specular:</span><br>
             <input type="radio" name="specular" id="phong-spec" value="phong" checked>Phong Specular
             <input type="radio" name="specular" id="blinn-spec" value="blinn">Blinn Specular
             <input type="radio" name="specular" id="off-spec" value="off">Specular OFF
+        </div>
+        <!-- Camera Controls -->
+        <div id="camera-controls" class="controls-opt">
+            <span>Camera:</span>
+            <input type="checkbox" id="cam-rotation">Camera Rotation</input>
+        </div>
+        <!-- Light Controls -->
+        <div id="light-controls" class="controls-opt">
+            <span>Light:</span>
+            <input type="checkbox" id="light-rotation">Light Rotation</input>
         </div>
     </div>
 
