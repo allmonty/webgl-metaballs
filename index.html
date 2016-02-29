@@ -72,6 +72,7 @@
     uniform vec4 camEye;
     uniform vec4 lightPosition;
     uniform bool blinnSpecular;
+    uniform bool specularOn;
 
     uniform vec4 ballsPos[numOfBalls];
     uniform vec4 ballsColors[numOfBalls];
@@ -260,23 +261,26 @@
                 {
                     diffuse = diffuseLightColor * drawColor.rgb * lambertian * diffuseIntensity;
 
-                    if(blinnSpecular)
+                    if(specularOn)
                     {
-                        //-----BLINN-----//
-                        vec3 blinnHalfway   = vec3(0.0, 0.0, 0.0);
-                        blinnHalfway        = normalize(dirToLight + dirToCamera);
+                        if(blinnSpecular)
+                        {
+                            // Blinn
+                            vec3 blinnHalfway   = vec3(0.0, 0.0, 0.0);
+                            blinnHalfway        = normalize(dirToLight + dirToCamera);
 
-                        float blinn = pow( max( dot(blendedNormal, blinnHalfway), 0.0 ), shine );
-                        specular    = specularLightColor * blinn * specularIntensity;
-                    }
-                    else
-                    {
-                        //-----PHONG-----//
-                        vec3 phongReflected     = vec3(0.0, 0.0, 0.0);
-                        phongReflected          = -reflect(dirToLightNorm, blendedNormal);
+                            float blinn = pow( max( dot(blendedNormal, blinnHalfway), 0.0 ), shine );
+                            specular    = specularLightColor * blinn * specularIntensity;
+                        }
+                        else
+                        {
+                            // Phong
+                            vec3 phongReflected     = vec3(0.0, 0.0, 0.0);
+                            phongReflected          = -reflect(dirToLightNorm, blendedNormal);
 
-                        float phong = pow( max( dot(phongReflected, dirToCameraNorm), 0.0 ), shine );
-                        specular    = specularLightColor * phong * specularIntensity;
+                            float phong = pow( max( dot(phongReflected, dirToCameraNorm), 0.0 ), shine );
+                            specular    = specularLightColor * phong * specularIntensity;
+                        }                        
                     }
                 }
 
@@ -303,6 +307,7 @@
 <script type="text/javascript" src="./js/models.js"></script>
 <script type="text/javascript" src="./js/renderobject.js"></script>
 <script type="text/javascript" src="./js/main_metaballs.js"></script>
+<script type="text/javascript" src="./js/controls.js"></script>
 </head>   
 
 <body>
@@ -311,9 +316,20 @@
 <div id="page">
     <h1 id="title">METABALLS</h1>
     <canvas id="glcanvas" width="640" height="400">
-        Oops ... your browser doesn't support the HTML5 canvas element
+        It seems that your browser doesn't support the HTML5 canvas element
     </canvas>
     <div id="fps"></div>
+
+    <div id="controls">
+        <div id="specular-controls" class="controls-opt">
+            <label><b>Specular:</b></label><br><br>
+            <input type="radio" name="specular" id="phong-spec" value="phong" checked>Phong Specular
+            <input type="radio" name="specular" id="blinn-spec" value="blinn">Blinn Specular
+            <input type="radio" name="specular" id="off-spec" value="off">Specular OFF
+        </div>
+    </div>
+
+
 </div>
     
 </center>

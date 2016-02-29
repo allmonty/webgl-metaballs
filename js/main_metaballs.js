@@ -87,7 +87,8 @@ var usePerspective = true;
 var camRotateAround = true;
 var camRotationSpeed = 0.1;
 
-var useBlinn = true;
+var useBlinn = false;
+var useSpecular = true;
 
 //=====FPS=====//
 var FPSDiv;
@@ -149,11 +150,12 @@ window.onload = function init()
     metaballShaderRef.SHADER_TRANSLATION_MATRIX = gl.getUniformLocation( metaballShaderRef.PROGRAM, "translate" );
     metaballShaderRef.SHADER_SCALE_MATRIX       = gl.getUniformLocation( metaballShaderRef.PROGRAM, "scale" );
 
-    metaballShaderRef.CAMEYE        = gl.getUniformLocation( metaballShaderRef.PROGRAM, "camEye" );
-    metaballShaderRef.LIGHT_POS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "lightPosition" );
-    metaballShaderRef.BALLS_POS     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsPos" );
-    metaballShaderRef.BALLS_COLORS  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsColors" );
-    metaballShaderRef.BLINN_SPEC    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "blinnSpecular" );
+    metaballShaderRef.CAMEYE       = gl.getUniformLocation( metaballShaderRef.PROGRAM, "camEye" );
+    metaballShaderRef.LIGHT_POS    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "lightPosition" );
+    metaballShaderRef.BALLS_POS    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsPos" );
+    metaballShaderRef.BALLS_COLORS = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsColors" );
+    metaballShaderRef.BLINN_SPEC   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "blinnSpecular" );
+    metaballShaderRef.SPECULAR_ON  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "specularOn" );
 
     //=====Start shader PROGRAM=====//
 
@@ -169,6 +171,9 @@ window.onload = function init()
     FPSDiv = document.getElementById("fps");
 
     render();
+
+    //===== Load Controls =====//
+    initControls();
 };
 
 var ballAnimControl = 0.0;
@@ -209,23 +214,24 @@ function render()
     gl.uniform4fv( currentShader.CAMEYE, vec3To4(camEye.position) );
     gl.uniform4fv( currentShader.LIGHT_POS, vec3To4(light.position) );    
     gl.uniform1i( currentShader.BLINN_SPEC, useBlinn );    
+    gl.uniform1i( currentShader.SPECULAR_ON, useSpecular );    
 
-    if(ballAnimUp)
-    {
-        ballAnimControl += 0.02;
-        if(ballAnimControl >= 1.5)
-        {
-            ballAnimUp = false;
-        }
-    }
-    else
-    {
-        ballAnimControl -= 0.02;
-        if(ballAnimControl <= -1.5)
-        {
-            ballAnimUp = true;
-        }
-    }
+    // if(ballAnimUp)
+    // {
+    //     ballAnimControl += 0.02;
+    //     if(ballAnimControl >= 1.5)
+    //     {
+    //         ballAnimUp = false;
+    //     }
+    // }
+    // else
+    // {
+    //     ballAnimControl -= 0.02;
+    //     if(ballAnimControl <= -1.5)
+    //     {
+    //         ballAnimUp = true;
+    //     }
+    // }
 
     var balls = [];
     balls[0] = vec3To4(vec3(0,0,0));
