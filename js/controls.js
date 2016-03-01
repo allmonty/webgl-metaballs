@@ -29,7 +29,16 @@ function specularControls()
 				useSpecular = false	
 			}
 		});
-	}	
+	}
+
+	var shineSlider = document.getElementById('shine-slider');
+	if(shineSlider)
+	{
+		shineSlider.addEventListener('input', function(){
+			shininess = this.value;
+			console.log(shininess);
+		});
+	}
 }
 
 function cameraControls()
@@ -42,11 +51,34 @@ function cameraControls()
 
 function lightControls()
 {
-	var cameraRotation = document.getElementById('light-rotation');
-	cameraRotation.addEventListener('click', function(){
+	var rotateLight = document.getElementById('light-rotation');
+	rotateLight.addEventListener('click', function(){
 		lightRotation = this.checked;
-		console.log(light.position);
 	});
+
+	var ambLightSlider = document.getElementById('amb-light-slider');
+	if(ambLightSlider)
+	{
+		ambLightSlider.addEventListener('input', function(){
+			ambLightIntensity = this.value;		
+		});
+	}
+
+	var diffbLightSlider = document.getElementById('diff-light-slider');
+	if(diffbLightSlider)
+	{
+		diffbLightSlider.addEventListener('input', function(){
+			diffLightIntensity = this.value;		
+		});
+	}
+
+	var specLightSlider = document.getElementById('spec-light-slider');
+	if(specLightSlider)
+	{
+		specLightSlider.addEventListener('input', function(){
+			specLightIntensity = this.value;		
+		});
+	}
 }
 
 function animationControls()
@@ -60,7 +92,6 @@ function animationControls()
 	if(animSlider)
 	{
 		animSlider.addEventListener('input', function(){
-			console.log('iauwfhilaubf');
 			resetPosition();
 			animSpeed = this.value;		
 		});
