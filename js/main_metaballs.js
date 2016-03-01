@@ -42,8 +42,11 @@ var metaballShaderRef = {
 
     LIGHT_POS: null,
     AMB_INTENSITY: null,
+    DIFF_INTENSITY: null,
+    SPEC_INTENSITY: null,
     BLINN_SPEC: null,
-    SPECULAR_ON: null
+    SPECULAR_ON: null,
+    SPECULAR_SHINE: null
 };
 
 //=====Projections=====//
@@ -94,6 +97,9 @@ var camRotationSpeed = 1.0;
 
 var lightRotation = false;
 var ambLightIntensity = 0.1;
+var diffLightIntensity = 1.0;
+var specLightIntensity = 1.0;
+var shininess = 125.0;
 
 var animation = true;
 // var animSpeed = 0.02;
@@ -185,7 +191,10 @@ window.onload = function init()
     metaballShaderRef.BALLS_RADIUS   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsRadius" );
     metaballShaderRef.BLINN_SPEC     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "blinnSpecular" );
     metaballShaderRef.SPECULAR_ON    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "specularOn" );
+    metaballShaderRef.SPECULAR_SHINE = gl.getUniformLocation( metaballShaderRef.PROGRAM, "shine" );
     metaballShaderRef.AMB_INTENSITY  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ambientIntensity" );
+    metaballShaderRef.DIFF_INTENSITY = gl.getUniformLocation( metaballShaderRef.PROGRAM, "diffuseIntensity" );
+    metaballShaderRef.SPEC_INTENSITY = gl.getUniformLocation( metaballShaderRef.PROGRAM, "specularIntensity" );
 
     //=====Start shader PROGRAM=====//
 
@@ -287,10 +296,11 @@ function render()
     // RADIUS
     gl.uniform1fv( currentShader.BALLS_RADIUS, flatten(ballsRadius));
 
-    // AMBIENT LIGHT INTENSITY
+    // LIGHT UPDATE
     gl.uniform1f( currentShader.AMB_INTENSITY, ambLightIntensity);    
-
-
+    gl.uniform1f( currentShader.DIFF_INTENSITY, diffLightIntensity);    
+    gl.uniform1f( currentShader.SPEC_INTENSITY, specLightIntensity);    
+    gl.uniform1f( currentShader.SPECULAR_SHINE, shininess);   
 
     plane.setWebGLToDraw(gl, currentShader);
     plane.drawTriangles(gl);

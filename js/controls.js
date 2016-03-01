@@ -29,7 +29,16 @@ function specularControls()
 				useSpecular = false	
 			}
 		});
-	}	
+	}
+
+	var shineSlider = document.getElementById('shine-slider');
+	if(shineSlider)
+	{
+		shineSlider.addEventListener('input', function(){
+			shininess = this.value;
+			console.log(shininess);
+		});
+	}
 }
 
 function cameraControls()
@@ -52,6 +61,22 @@ function lightControls()
 	{
 		ambLightSlider.addEventListener('input', function(){
 			ambLightIntensity = this.value;		
+		});
+	}
+
+	var diffbLightSlider = document.getElementById('diff-light-slider');
+	if(diffbLightSlider)
+	{
+		diffbLightSlider.addEventListener('input', function(){
+			diffLightIntensity = this.value;		
+		});
+	}
+
+	var specLightSlider = document.getElementById('spec-light-slider');
+	if(specLightSlider)
+	{
+		specLightSlider.addEventListener('input', function(){
+			specLightIntensity = this.value;		
 		});
 	}
 }
