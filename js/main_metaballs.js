@@ -35,11 +35,13 @@ var metaballShaderRef = {
     VERTEX_POSITION: null,
 
     CAMEYE: null,
-    LIGHT_POS: null,
+
     BALLS_POS: null,
     BALLS_COLORS: null,
     BALLS_RADIUS: null,
 
+    LIGHT_POS: null,
+    AMB_INTENSITY: null,
     BLINN_SPEC: null,
     SPECULAR_ON: null
 };
@@ -91,6 +93,7 @@ var camRotateAround = false;
 var camRotationSpeed = 1.0;
 
 var lightRotation = false;
+var ambLightIntensity = 0.1;
 
 var animation = true;
 // var animSpeed = 0.02;
@@ -175,13 +178,14 @@ window.onload = function init()
     metaballShaderRef.SHADER_TRANSLATION_MATRIX = gl.getUniformLocation( metaballShaderRef.PROGRAM, "translate" );
     metaballShaderRef.SHADER_SCALE_MATRIX       = gl.getUniformLocation( metaballShaderRef.PROGRAM, "scale" );
 
-    metaballShaderRef.CAMEYE       = gl.getUniformLocation( metaballShaderRef.PROGRAM, "camEye" );
-    metaballShaderRef.LIGHT_POS    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "lightPosition" );
-    metaballShaderRef.BALLS_POS    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsPos" );
-    metaballShaderRef.BALLS_COLORS = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsColors" );
-    metaballShaderRef.BALLS_RADIUS = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsRadius" );
-    metaballShaderRef.BLINN_SPEC   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "blinnSpecular" );
-    metaballShaderRef.SPECULAR_ON  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "specularOn" );
+    metaballShaderRef.CAMEYE         = gl.getUniformLocation( metaballShaderRef.PROGRAM, "camEye" );
+    metaballShaderRef.LIGHT_POS      = gl.getUniformLocation( metaballShaderRef.PROGRAM, "lightPosition" );
+    metaballShaderRef.BALLS_POS      = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsPos" );
+    metaballShaderRef.BALLS_COLORS   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsColors" );
+    metaballShaderRef.BALLS_RADIUS   = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ballsRadius" );
+    metaballShaderRef.BLINN_SPEC     = gl.getUniformLocation( metaballShaderRef.PROGRAM, "blinnSpecular" );
+    metaballShaderRef.SPECULAR_ON    = gl.getUniformLocation( metaballShaderRef.PROGRAM, "specularOn" );
+    metaballShaderRef.AMB_INTENSITY  = gl.getUniformLocation( metaballShaderRef.PROGRAM, "ambientIntensity" );
 
     //=====Start shader PROGRAM=====//
 
@@ -282,6 +286,9 @@ function render()
     
     // RADIUS
     gl.uniform1fv( currentShader.BALLS_RADIUS, flatten(ballsRadius));
+
+    // AMBIENT LIGHT INTENSITY
+    gl.uniform1f( currentShader.AMB_INTENSITY, ambLightIntensity);    
 
 
 

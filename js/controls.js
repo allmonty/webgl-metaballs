@@ -42,11 +42,18 @@ function cameraControls()
 
 function lightControls()
 {
-	var cameraRotation = document.getElementById('light-rotation');
-	cameraRotation.addEventListener('click', function(){
+	var rotateLight = document.getElementById('light-rotation');
+	rotateLight.addEventListener('click', function(){
 		lightRotation = this.checked;
-		console.log(light.position);
 	});
+
+	var ambLightSlider = document.getElementById('amb-light-slider');
+	if(ambLightSlider)
+	{
+		ambLightSlider.addEventListener('input', function(){
+			ambLightIntensity = this.value;		
+		});
+	}
 }
 
 function animationControls()
@@ -60,7 +67,6 @@ function animationControls()
 	if(animSlider)
 	{
 		animSlider.addEventListener('input', function(){
-			console.log('iauwfhilaubf');
 			resetPosition();
 			animSpeed = this.value;		
 		});
