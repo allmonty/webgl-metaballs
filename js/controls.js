@@ -57,11 +57,14 @@ function animationControls()
 	});
 
 	var animSlider = document.getElementById('anim-speed-slider');
-	animSlider.addEventListener('input', function(){
-		console.log('iauwfhilaubf');
-		resetPosition();
-		animSpeed = this.value;
-	});
+	if(animSlider)
+	{
+		animSlider.addEventListener('input', function(){
+			console.log('iauwfhilaubf');
+			resetPosition();
+			animSpeed = this.value;		
+		});
+	}
 }
 
 function ballsControl()
