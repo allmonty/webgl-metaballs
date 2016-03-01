@@ -70,7 +70,7 @@ function ballsControl()
 		slider.classList.add('radius-slider');
 		slider.type  = 'range';
 		slider.max   = 2.0;
-		slider.min   = 0.1;
+		slider.min   = 0.0;
 		slider.value = 1.0
 		slider.step  = 0.1;		
 		ballDiv.appendChild(slider);
