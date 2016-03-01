@@ -95,6 +95,16 @@ var useBlinn = false;
 var useSpecular = true;
 
 var ballsRadius = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+var ballsColors = [];
+ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
+ballsColors[1] = vec4(0.0, 1.0, 0.0, 1.0);
+ballsColors[2] = vec4(0.0, 0.0, 1.0, 1.0);
+ballsColors[3] = vec4(1.0, 1.0, 0.0, 1.0);
+ballsColors[4] = vec4(0.0, 1.0, 1.0, 1.0);
+ballsColors[5] = vec4(1.0, 0.0, 1.0, 1.0);
+ballsColors[6] = vec4(1.0, 0.5, 0.5, 1.0);
+ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
+ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
 
 //=====FPS=====//
 var FPSDiv;
@@ -257,16 +267,16 @@ function render()
     gl.uniform4fv( currentShader.BALLS_POS, flatten(balls));
 
     // COLOR
-    var ballsColors = [];
-    ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
-    ballsColors[1] = vec4(0.0, 1.0, 0.0, 1.0);
-    ballsColors[2] = vec4(0.0, 0.0, 1.0, 1.0);
-    ballsColors[3] = vec4(1.0, 1.0, 0.0, 1.0);
-    ballsColors[4] = vec4(0.0, 1.0, 1.0, 1.0);
-    ballsColors[5] = vec4(1.0, 0.0, 1.0, 1.0);
-    ballsColors[6] = vec4(1.0, 0.5, 0.5, 1.0);
-    ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
-    ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
+    // var ballsColors = [];
+    // ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
+    // ballsColors[1] = vec4(0.0, 1.0, 0.0, 1.0);
+    // ballsColors[2] = vec4(0.0, 0.0, 1.0, 1.0);
+    // ballsColors[3] = vec4(1.0, 1.0, 0.0, 1.0);
+    // ballsColors[4] = vec4(0.0, 1.0, 1.0, 1.0);
+    // ballsColors[5] = vec4(1.0, 0.0, 1.0, 1.0);
+    // ballsColors[6] = vec4(1.0, 0.5, 0.5, 1.0);
+    // ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
+    // ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
     gl.uniform4fv( currentShader.BALLS_COLORS, flatten(ballsColors));
     
     // RADIUS

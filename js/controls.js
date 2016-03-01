@@ -58,9 +58,10 @@ function ballsControl()
 		ballDiv.id = 'ball-control-' + i;
 
 		var nameSpan = document.createElement('span');
-		nameSpan.innerHTML = 'Ball ' + i;
+		nameSpan.innerHTML = '<br>Ball ' + i + ' (radius/color)<br>';
 		ballDiv.appendChild(nameSpan);
 
+		// RADIUS SLIDER
 		var radiusSpan = document.createElement('span');
 		radiusSpan.innerHTML = 'Radius: ';
 		ballDiv.appendChild(radiusSpan);
@@ -71,13 +72,56 @@ function ballsControl()
 		slider.max   = 2.0;
 		slider.min   = 0.1;
 		slider.value = 1.0
-		slider.step  = 0.1;
-		
+		slider.step  = 0.1;		
 		ballDiv.appendChild(slider);
+
+		// COLOR PICKER
+		var input = document.createElement('input');
+		// input.class = 'jscolor';
+		input.classList.add('jscolor');
+		input.classList.add('color-picker');
+        var picker = new jscolor(input);
+
+        // Adding event to set ball color
+        (function(i)
+		{
+			
+			input.addEventListener('change', function(){
+	        	console.log(i);
+	        	var color = this.style.backgroundColor;
+	        	color = color.replace(/[^\d,-]/g, '');
+	        	color = color.split(','); // Example format: "123,255,18"
+
+	        	var rawR = parseFloat(color[0]) / 255;
+	        	var rawG = parseFloat(color[1]) / 255;
+	        	var rawB = parseFloat(color[2]) / 255;
+
+	        	var r = (Math.round(rawR * 10) / 10) / 1.0;
+	        	var g = Math.round(rawG * 10) / 10;
+	        	var b = Math.round(rawB * 10) / 10;
+
+	        	// var rawR = ( (color[0]) / 255 ).toFixed(1);
+	        	// var rawG = ( (color[1]) / 255 ).toFixed(1);
+	        	// var rawB = ( (color[2]) / 255 ).toFixed(1);
+
+	        	// var r = parseFloat(rawR);
+	        	// var g = Math.round(rawG * 10) / 10;
+	        	// var b = Math.round(rawB * 10) / 10;
+	        	// console.log(r + " " +rawG + " " +rawB + " ");
+
+	        	console.log(r + " " +g + " " +b + " ");
+
+	        	ballsColors[i] = vec4(r, g, b, 1.0);
+        	})
+
+		}(i));
+
+    
+		ballDiv.appendChild(input);
 		ballControlDiv.appendChild(ballDiv);
 	}
 
-	// Adding events to set these radius
+	// Adding events to set radius
 	var sliders = document.getElementsByClassName('radius-slider');
 	for(var i = 0; i < sliders.length; i++)
 	{
@@ -88,13 +132,7 @@ function ballsControl()
 			});
 		}(i));
 	}
-
 }
-
-
-
-
-
 
 
 

@@ -6,11 +6,20 @@
   font-family: 'Adequate';
   src: url("../fonts/Adequate-ExtraLight.ttf"); }
 
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0; }
+
 body {
   background-color: #000;
   margin: 0px 0px 0px 0px;
   font-family: 'Adequate';
+  height: 100%;
   background-image: url("../images/footer_lodyas.png"); }
+
+body > * {
+  box-sizing: border-box; }
 
 #centerStripe {
   position: fixed;
@@ -30,6 +39,10 @@ body {
   font-weight: bold;
   font-size: 1.2em; }
 
+#controls {
+  overflow-y: auto;
+  height: 50%; }
+
 h1 {
   text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
   color: #000;
@@ -45,7 +58,8 @@ h1 {
 #page {
   position: absolute;
   left: 25%;
-  width: 50%; }
+  width: 50%;
+  height: 100%; }
   #page > h1 {
     opacity: initial; }
 
