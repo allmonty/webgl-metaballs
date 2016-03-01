@@ -3,6 +3,7 @@ function initControls()
 	specularControls();
 	cameraControls();
 	lightControls();
+	animationControls();
 	ballsControl();
 }
 
@@ -44,6 +45,22 @@ function lightControls()
 	var cameraRotation = document.getElementById('light-rotation');
 	cameraRotation.addEventListener('click', function(){
 		lightRotation = this.checked;
+		console.log(light.position);
+	});
+}
+
+function animationControls()
+{
+	var animToggle = document.getElementById('anim-toggle');
+	animToggle.addEventListener('click', function(){
+		animation = this.checked;
+	});
+
+	var animSlider = document.getElementById('anim-speed-slider');
+	animSlider.addEventListener('input', function(){
+		console.log('iauwfhilaubf');
+		resetPosition();
+		animSpeed = this.value;
 	});
 }
 
@@ -133,8 +150,6 @@ function ballsControl()
 		}(i));
 	}
 }
-
-
 
 
 

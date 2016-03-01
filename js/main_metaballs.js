@@ -73,7 +73,7 @@ plane.setPosition(vec3(0.0, 0.0, 0.3));
 
 var light = new RenderObject();
 light.instanceName = "light";
-light.position = vec3(-10.0, 0.0, -10.0);
+light.position = vec3(-2.9, 0.0, -13.8);
 
 var camEye = new RenderObject();
 camEye.instanceName = "camEye";
@@ -86,15 +86,22 @@ camEye.translateWithChildren(vec3(0.0, 0.0, -10.0));
 //=====Control Variables=====//
 
 var usePerspective = true;
+
 var camRotateAround = false;
 var camRotationSpeed = 1.0;
+
 var lightRotation = false;
-var numOfBalls = 9;
+
+var animation = true;
+// var animSpeed = 0.02;
+var animSpeed = 0.01;
 
 var useBlinn = false;
 var useSpecular = true;
 
+var numOfBalls = 9;
 var ballsRadius = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+
 var ballsColors = [];
 ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
 ballsColors[1] = vec4(0.0, 1.0, 0.0, 1.0);
@@ -105,6 +112,8 @@ ballsColors[5] = vec4(1.0, 0.0, 1.0, 1.0);
 ballsColors[6] = vec4(1.0, 0.5, 0.5, 1.0);
 ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
 ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
+
+var balls = [];
 
 //=====FPS=====//
 var FPSDiv;
@@ -236,26 +245,28 @@ function render()
     gl.uniform1i( currentShader.BLINN_SPEC, useBlinn );    
     gl.uniform1i( currentShader.SPECULAR_ON, useSpecular );    
 
-    if(ballAnimUp)
+    if(animation)
     {
-        ballAnimControl += 0.02;
-        if(ballAnimControl >= 1.5)
+        if(ballAnimUp)
         {
-            ballAnimUp = false;
+            ballAnimControl += animSpeed;
+            if(ballAnimControl >= 1.5)
+            {
+                ballAnimUp = false;
+            }
         }
-    }
-    else
-    {
-        ballAnimControl -= 0.02;
-        if(ballAnimControl <= -1.5)
+        else
         {
-            ballAnimUp = true;
-        }
+            ballAnimControl -= animSpeed;
+            if(ballAnimControl <= -1.5)
+            {
+                ballAnimUp = true;
+            }
+        }        
     }
 
     // POSITION
-    var balls = [];
-    balls[0] = vec3To4(vec3(0,0,0));
+    balls[0] = vec3To4(vec3(0,0,0));    
     balls[1] = vec3To4(add(vec3(0,0,0), vec3(0.0, -ballAnimControl, 0)));
     balls[2] = vec3To4(add(vec3(0,0,0), vec3(0.0,  ballAnimControl, 0)));
     balls[3] = vec3To4(add(vec3(0,0,0), vec3( ballAnimControl, 0.0, 0.0)));
@@ -267,20 +278,9 @@ function render()
     gl.uniform4fv( currentShader.BALLS_POS, flatten(balls));
 
     // COLOR
-    // var ballsColors = [];
-    // ballsColors[0] = vec4(1.0, 0.0, 0.0, 1.0);
-    // ballsColors[1] = vec4(0.0, 1.0, 0.0, 1.0);
-    // ballsColors[2] = vec4(0.0, 0.0, 1.0, 1.0);
-    // ballsColors[3] = vec4(1.0, 1.0, 0.0, 1.0);
-    // ballsColors[4] = vec4(0.0, 1.0, 1.0, 1.0);
-    // ballsColors[5] = vec4(1.0, 0.0, 1.0, 1.0);
-    // ballsColors[6] = vec4(1.0, 0.5, 0.5, 1.0);
-    // ballsColors[7] = vec4(0.5, 1.0, 0.5, 1.0);
-    // ballsColors[8] = vec4(0.5, 0.5, 1.0, 1.0);
     gl.uniform4fv( currentShader.BALLS_COLORS, flatten(ballsColors));
     
     // RADIUS
-    // console.log(ballsRadius);
     gl.uniform1fv( currentShader.BALLS_RADIUS, flatten(ballsRadius));
 
 
